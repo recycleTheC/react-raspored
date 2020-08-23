@@ -17,10 +17,6 @@ import {
   REGISTER_FAIL,
 } from "../types";
 
-/**
- * @todo Implementing Authentication in App
- * @body Implement authentication for using components that need user tokens
- */
 const AuthState = (props) => {
   const initialState = {
     token: localStorage.getItem("token"),
