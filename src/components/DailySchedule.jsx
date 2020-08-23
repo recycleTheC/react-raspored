@@ -5,6 +5,11 @@ import { ListGroup, Badge, Col, Row } from "react-bootstrap";
 function DailySchedule() {
   const context = useContext(ScheduleContext);
   const { schedule, notes } = context;
+  
+  /**
+   * @todo Refactoring 'DailySchedule' component
+   * @body Component should be constructed from few smaller components (`ScheduleItem`, etc.)
+   */
 
   return (
     <ListGroup variant="flush">
