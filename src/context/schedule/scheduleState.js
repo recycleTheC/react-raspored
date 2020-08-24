@@ -1,6 +1,6 @@
 import React, { useReducer } from "react";
 import axios from "axios";
-import { /*addDays,*/ getWeek, format } from "date-fns";
+import { getWeek, format } from "date-fns";
 import locale from "date-fns/locale/hr";
 
 import ScheduleContext from "./scheduleContext";
@@ -115,8 +115,15 @@ const ScheduleState = (props) => {
 
   // Set new note
 
-  const setNotes = async (date, id, note) => {
+  const setNotes = async (date, classKey, id, note) => {
     setLoading();
+
+    const send = {
+      classId: id,
+      classKey: classKey,
+      note: note,
+      date: format(date, "yyyy-MM-dd"),
+    };
 
     const options = {
       headers: {
@@ -125,7 +132,7 @@ const ScheduleState = (props) => {
     };
 
     try {
-      const res = await axios.post(`/api/notes/`, options);
+      const res = await axios.post(`/api/notes/`, send, options);
 
       dispatch({
         type: SET_NOTES,

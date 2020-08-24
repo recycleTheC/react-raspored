@@ -1,0 +1,117 @@
+import React, { useContext, useState } from "react";
+import ScheduleContext from "../../context/schedule/scheduleContext";
+import {
+  ListGroup,
+  Badge,
+  Col,
+  Row,
+  Button,
+  ButtonToolbar,
+  ButtonGroup,
+  ListGroupItem,
+} from "react-bootstrap";
+import { v4 as uuid } from "uuid";
+import ReactMarkdown from "react-markdown";
+
+import AddNote from "../notes/AddNote";
+
+function DailySchedule({ date }) {
+  const context = useContext(ScheduleContext);
+  const { schedule, notes } = context;
+
+  const [showModal, setModal] = useState(false);
+  const toggleModal = () => setModal(!showModal);
+
+  /**
+   * @todo Refactoring 'DailySchedule' component
+   * @body Component should be constructed from few smaller components (`ScheduleItem`, etc.)
+   */
+
+  return (
+    <ListGroup variant="flush" className="mt-2">
+      <ListGroupItem key="toolbar">
+        <ButtonToolbar>
+          <ButtonGroup style={{ margin: "auto" }}>
+            <Button variant="outline-success" size="sm" onClick={toggleModal}>
+              Dodaj bilješku
+            </Button>
+            <Button variant="outline-danger" size="sm">
+              Dodaj ispit
+            </Button>
+            <Button variant="outline-info" size="sm">
+              Dodaj izmjene
+            </Button>
+          </ButtonGroup>
+        </ButtonToolbar>
+      </ListGroupItem>
+
+      {schedule.map((x) => {
+        const { location, id, timeStart, timeEnd } = x;
+        return (
+          <ListGroup.Item key={x.id}>
+            <Row>
+              <Col>
+                <Badge pill variant="primary">
+                  {id}. sat
+                </Badge>{" "}
+                <Badge pill variant="success">
+                  {timeStart} - {timeEnd}
+                </Badge>{" "}
+                <Badge pill variant="light">
+                  lokacija: {location}
+                </Badge>
+                {x.class
+                  .map((_class) => {
+                    return (
+                      <Row key={_class._id}>
+                        <Col md="6" key={_class._id}>
+                          <div>
+                            <h4 className="mt-2">{_class.name}</h4>
+                            <small>
+                              {_class.teacher
+                                .map((t) => t.name)
+                                .reduce((prev, curr) => [prev, " / ", curr])}
+                            </small>
+                          </div>
+                        </Col>
+                        <Col md={6} sm={12} className="px-0">
+                          {notes.filter(
+                            (k) => k.classId === id && k.classKey === _class._id
+                          ).length > 0 && (
+                            <Col md="auto" sm={12} className="mt-2">
+                              <Badge pill variant="light">
+                                Bilješke
+                              </Badge>
+                              <ul className="pl-4">
+                                {notes
+                                  .filter(
+                                    (k) =>
+                                      k.classId === id &&
+                                      k.classKey === _class._id
+                                  )
+                                  .map((n) => (
+                                    <li key={n._id}>
+                                      <small>
+                                        <ReactMarkdown source={n.note} />
+                                      </small>
+                                    </li>
+                                  ))}
+                              </ul>
+                            </Col>
+                          )}
+                        </Col>
+                      </Row>
+                    );
+                  })
+                  .reduce((prev, curr) => [prev, <hr key={uuid()} />, curr])}
+              </Col>
+            </Row>
+          </ListGroup.Item>
+        );
+      })}
+      <AddNote show={showModal} close={toggleModal} date={date} />
+    </ListGroup>
+  );
+}
+
+export default DailySchedule;

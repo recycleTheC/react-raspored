@@ -9,7 +9,7 @@ import Column from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import { ArrowRightCircle, ArrowLeftCircle } from "react-bootstrap-icons";
 
-import DailySchedule from "../components/DailySchedule";
+import DailySchedule from "../components/schedule/DailySchedule";
 
 export default function Home() {
   const context = useContext(ScheduleContext);
@@ -66,7 +66,7 @@ export default function Home() {
             </Button>
           </Column>
         </Row>
-        {!schedule.msg && <DailySchedule />}
+        {!schedule.msg && <DailySchedule date={date} />}
       </div>
     );
   }
