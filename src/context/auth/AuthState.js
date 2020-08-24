@@ -38,8 +38,6 @@ const AuthState = (props) => {
     try {
       const res = await axios.get("/api/auth");
 
-      console.log(res);
-
       dispatch({
         type: USER_LOADED,
         payload: res.data,
@@ -100,7 +98,6 @@ const AuthState = (props) => {
 
       loadUser();
     } catch (err) {
-      console.log(err.response);
       dispatch({
         type: LOGIN_FAIL,
         payload: err.response.data.msg,
@@ -118,10 +115,11 @@ const AuthState = (props) => {
 
   // Clear Errors
 
-  const clearErrors = () =>
+  const clearErrors = () => {
     dispatch({
       type: CLEAR_ERRORS,
     });
+  };
 
   return (
     <AuthContext.Provider

@@ -10,9 +10,9 @@ const Login = (props) => {
   const { setAlert } = alertContext;
 
   const authContext = useContext(AuthContext);
-  const { login, isAuthenticated, error } = authContext;
+  const { login, isAuthenticated, error, clearErrors } = authContext;
 
-  const { handleSubmit, register, errors, clearErrors } = useForm();
+  const { handleSubmit, register, errors } = useForm();
 
   const onSubmit = (values) => {
     login({ email: values.email, password: values.password });
@@ -26,7 +26,6 @@ const Login = (props) => {
       setAlert("Pogreška", error);
       clearErrors();
     }
-    console.log(error);
     // eslint-disable-next-line
   }, [isAuthenticated, props.history, error]);
 
@@ -39,9 +38,15 @@ const Login = (props) => {
           {errors.email && <small>({errors.email.message})</small>}
         </Form.Label>
         <Form.Control
-          type="text"
+          type="email"
           name="email"
-          ref={register({ required: "Obavezno" })}
+          ref={register({
+            required: "Obavezno",
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: "Nije upisan ispravan format e-mail adrese",
+            },
+          })}
         />
 
         <Form.Group controlId="password">
