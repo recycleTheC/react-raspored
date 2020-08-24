@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import ScheduleContext from "../../context/schedule/scheduleContext";
+import AuthContext from "../../context/auth/authContext";
 import {
   ListGroup,
   Badge,
@@ -16,11 +17,30 @@ import ReactMarkdown from "react-markdown";
 import AddNote from "../notes/AddNote";
 
 function DailySchedule({ date }) {
-  const context = useContext(ScheduleContext);
-  const { schedule, notes } = context;
+  const scheduleContext = useContext(ScheduleContext);
+  const { schedule, notes } = scheduleContext;
+  const authContext = useContext(AuthContext);
 
   const [showModal, setModal] = useState(false);
   const toggleModal = () => setModal(!showModal);
+
+  const edit = (
+    <ListGroupItem key="toolbar">
+      <ButtonToolbar>
+        <ButtonGroup style={{ margin: "auto" }}>
+          <Button variant="outline-success" size="sm" onClick={toggleModal}>
+            Dodaj bilješku
+          </Button>
+          <Button variant="outline-danger" size="sm">
+            Dodaj ispit
+          </Button>
+          <Button variant="outline-info" size="sm">
+            Dodaj izmjene
+          </Button>
+        </ButtonGroup>
+      </ButtonToolbar>
+    </ListGroupItem>
+  );
 
   /**
    * @todo Refactoring 'DailySchedule' component
@@ -29,21 +49,7 @@ function DailySchedule({ date }) {
 
   return (
     <ListGroup variant="flush" className="mt-2">
-      <ListGroupItem key="toolbar">
-        <ButtonToolbar>
-          <ButtonGroup style={{ margin: "auto" }}>
-            <Button variant="outline-success" size="sm" onClick={toggleModal}>
-              Dodaj bilješku
-            </Button>
-            <Button variant="outline-danger" size="sm">
-              Dodaj ispit
-            </Button>
-            <Button variant="outline-info" size="sm">
-              Dodaj izmjene
-            </Button>
-          </ButtonGroup>
-        </ButtonToolbar>
-      </ListGroupItem>
+      {authContext.isAuthenticated && edit}
 
       {schedule.map((x) => {
         const { location, id, timeStart, timeEnd } = x;
