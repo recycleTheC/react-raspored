@@ -6,10 +6,10 @@ import {
   Badge,
   Col,
   Row,
-  Button,
   ButtonToolbar,
   ButtonGroup,
   ListGroupItem,
+  Dropdown,
 } from "react-bootstrap";
 import { v4 as uuid } from "uuid";
 import ReactMarkdown from "react-markdown";
@@ -28,15 +28,34 @@ function DailySchedule({ date }) {
     <ListGroupItem key="toolbar">
       <ButtonToolbar>
         <ButtonGroup style={{ margin: "auto" }}>
-          <Button variant="outline-success" size="sm" onClick={toggleModal}>
-            Dodaj bilješku
-          </Button>
-          <Button variant="outline-danger" size="sm">
-            Dodaj ispit
-          </Button>
-          <Button variant="outline-info" size="sm">
-            Dodaj izmjene
-          </Button>
+          <Dropdown>
+            <Dropdown.Toggle variant="outline-success" size="sm">
+              Bilješke
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={toggleModal}>
+                Dodaj bilješku
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
+          <Dropdown>
+            <Dropdown.Toggle variant="outline-danger" size="sm">
+              Ispiti
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>Dodaj ispit</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
+          <Dropdown>
+            <Dropdown.Toggle variant="outline-info" size="sm">
+              Izmjene
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>Dodaj izmjenu</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </ButtonGroup>
       </ButtonToolbar>
     </ListGroupItem>
