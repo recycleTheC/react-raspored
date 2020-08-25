@@ -117,7 +117,18 @@ function DailySchedule({ date }) {
                                   .map((n) => (
                                     <li key={n._id}>
                                       <small>
-                                        <ReactMarkdown source={n.note} />
+                                        <ReactMarkdown
+                                          source={n.note}
+                                          renderers={{
+                                            paragraph: (props) => {
+                                              return (
+                                                <p className="mb-1" style={{}}>
+                                                  {props.children}
+                                                </p>
+                                              );
+                                            },
+                                          }}
+                                        />
                                       </small>
                                     </li>
                                   ))}
