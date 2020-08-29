@@ -28,16 +28,8 @@ const ScheduleState = (props) => {
 
   // Get schedule
 
-  /**
-   * @todo Schedule is determined by date on server
-   * @body Client should send a request with date only, not the additional data. Server should interpret the date and determine the exact schedule which should be returned to the client.
-   */
-
   const getSchedule = async (date) => {
     setLoading();
-
-    const week = getWeek(date) % 2 === 0 ? "parni" : "neparni"; // this should happen on server
-    const day = format(date, "eeee", { locale, weekStartsOn: 2 });
 
     const options = {
       headers: {
@@ -46,7 +38,10 @@ const ScheduleState = (props) => {
     };
 
     try {
-      const res = await axios.get(`/api/schedule/${week}/${day}/`, options); // send just date
+      const res = await axios.get(
+        `/api/schedule/${format(date, "yyyy-MM-dd")}`,
+        options
+      );
 
       dispatch({
         type: GET_DAILY_SCHEDULE,
@@ -56,7 +51,6 @@ const ScheduleState = (props) => {
       console.log(err);
       dispatch({
         type: GET_DAILY_SCHEDULE,
-        //payload: err.data.msg,
         payload: { msg: "Raspored nije pronađen" },
       });
     }
