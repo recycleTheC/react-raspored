@@ -76,22 +76,24 @@ function DailySchedule({ date }) {
           <ListGroup.Item key={x.id}>
             <Row>
               <Col>
-                <Badge pill variant="primary">
-                  {id}. sat
-                </Badge>{" "}
-                <Badge pill variant="success">
-                  {timeStart} - {timeEnd}
-                </Badge>{" "}
-                <Badge pill variant="light">
-                  lokacija: {location}
-                </Badge>
+                <div className="mb-2">
+                  <Badge pill variant="primary">
+                    {id}. sat
+                  </Badge>{" "}
+                  <Badge pill variant="success">
+                    {timeStart} - {timeEnd}
+                  </Badge>{" "}
+                  <Badge pill variant="light">
+                    lokacija: {location}
+                  </Badge>
+                </div>
                 {x.class
                   .map((_class) => {
                     return (
                       <Row key={_class._id}>
-                        <Col md="6" key={_class._id}>
+                        <Col md="6" key={_class._id} className="mb-2">
                           <div>
-                            <h4 className="mt-2">{_class.name}</h4>
+                            <h4>{_class.name}</h4>
                             <small>
                               {_class.teacher
                                 .map((t) => t.name)
@@ -103,7 +105,7 @@ function DailySchedule({ date }) {
                           {notes.filter(
                             (k) => k.classId === id && k.classKey === _class._id
                           ).length > 0 && (
-                            <Col md="auto" sm={12} className="mt-2">
+                            <Col md="auto" sm={12}>
                               <Badge pill variant="light">
                                 Bilješke
                               </Badge>
