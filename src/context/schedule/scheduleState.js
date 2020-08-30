@@ -1,7 +1,6 @@
 import React, { useReducer } from "react";
 import axios from "axios";
-import { getWeek, format } from "date-fns";
-import locale from "date-fns/locale/hr";
+import { format } from "date-fns";
 
 import ScheduleContext from "./scheduleContext";
 import ScheduleReducer from "./scheduleReducer";
