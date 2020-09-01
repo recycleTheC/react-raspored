@@ -13,61 +13,60 @@ import DailySchedule from "../components/schedule/DailySchedule";
 
 export default function Home() {
   const context = useContext(ScheduleContext);
-  const { loading, schedule, getSchedule, getNotes } = context;
+  const { loading, schedule, getSchedule } = context;
   const [date, setDate] = useState(new Date());
 
   useEffect(() => {
-    getNotes(date);
     getSchedule(date);
     // eslint-disable-next-line
   }, [date]);
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Spinner animation="grow" variant="success" />
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <Row className="text-center">
-          <Column>
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                setDate(addDays(date, -1));
-              }}
-            >
-              <ArrowLeftCircle />
-            </Button>
+  const spinner = (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Spinner animation="grow" variant="success" />
+    </div>
+  );
+
+  return (
+    <div>
+      <Row className="text-center">
+        <Column>
+          <Button
+            variant="outline-primary"
+            onClick={() => {
+              setDate(addDays(date, -1));
+            }}
+          >
+            <ArrowLeftCircle />
+          </Button>
+        </Column>
+        <Column>
+          <p>{format(date, "eeee, dd.MM.yyyy.", { locale })}</p>
+        </Column>
+        <Column>
+          <Button
+            type="submit"
+            variant="outline-primary"
+            onClick={() => {
+              setDate(addDays(date, 1));
+            }}
+          >
+            <ArrowRightCircle />
+          </Button>
+        </Column>
+        {schedule.msg && (
+          <Column md="12" sm="12">
+            <small>{schedule.msg}</small>
           </Column>
-          <Column>
-            <p>{format(date, "eeee, dd.MM.yyyy.", { locale })}</p>
-            <p>
-              <small>{schedule.msg && schedule.msg}</small>
-            </p>
-          </Column>
-          <Column>
-            <Button
-              type="submit"
-              variant="outline-primary"
-              onClick={() => {
-                setDate(addDays(date, 1));
-              }}
-            >
-              <ArrowRightCircle />
-            </Button>
-          </Column>
-        </Row>
-        {!schedule.msg && <DailySchedule date={date} />}
-      </div>
-    );
-  }
+        )}
+      </Row>
+      {loading ? spinner : !schedule.msg && <DailySchedule date={date} />}
+    </div>
+  );
 }
