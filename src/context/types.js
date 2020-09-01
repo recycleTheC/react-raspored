@@ -1,4 +1,5 @@
 export const GET_DAILY_SCHEDULE = "GET_DAILY_SCHEDULE";
+export const RESET_SCHEDULE = "RESET_SCHEDULE";
 export const CHANGE_DATE = "CHANGE_DATE";
 export const SET_LOADING = "SET_LOADING";
 export const GET_TEACHERS = "GET_TEACHERS";

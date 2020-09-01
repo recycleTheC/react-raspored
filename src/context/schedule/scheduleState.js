@@ -12,6 +12,7 @@ import {
   CREATE_TEACHER,
   GET_NOTES,
   SET_NOTES,
+  RESET_SCHEDULE,
 } from "../types";
 
 const ScheduleState = (props) => {
@@ -30,6 +31,10 @@ const ScheduleState = (props) => {
   const getSchedule = async (date) => {
     setLoading();
 
+    dispatch({
+      type: RESET_SCHEDULE,
+    });
+
     const options = {
       headers: {
         "Content-Type": "application/json",
@@ -41,6 +46,8 @@ const ScheduleState = (props) => {
         `/api/schedule/${format(date, "yyyy-MM-dd")}`,
         options
       );
+
+      await getNotes(date);
 
       dispatch({
         type: GET_DAILY_SCHEDULE,
@@ -58,8 +65,6 @@ const ScheduleState = (props) => {
   // Get notes
 
   const getNotes = async (date) => {
-    setLoading();
-
     const options = {
       headers: {
         "Content-Type": "application/json",

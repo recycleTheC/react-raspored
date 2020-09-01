@@ -5,6 +5,7 @@ import {
   CREATE_TEACHER,
   GET_NOTES,
   SET_NOTES,
+  RESET_SCHEDULE,
 } from "../types";
 
 export default (state, action) => {
@@ -14,6 +15,11 @@ export default (state, action) => {
         ...state,
         schedule: action.payload,
         loading: false,
+      };
+    case RESET_SCHEDULE:
+      return {
+        ...state,
+        schedule: [],
       };
     case GET_NOTES:
       return {
