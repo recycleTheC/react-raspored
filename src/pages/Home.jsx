@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import ScheduleContext from "../context/schedule/scheduleContext";
-import { format, addDays } from "date-fns";
-import locale from "date-fns/locale/hr";
+import { addDays } from "date-fns";
 
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
@@ -10,6 +9,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { ArrowRightCircle, ArrowLeftCircle } from "react-bootstrap-icons";
 
 import DailySchedule from "../components/schedule/DailySchedule";
+import DatePick from "../components/date-picker/DatePicker";
 
 export default function Home() {
   const context = useContext(ScheduleContext);
@@ -47,7 +47,7 @@ export default function Home() {
           </Button>
         </Column>
         <Column>
-          <p>{format(date, "eeee, dd.MM.yyyy.", { locale })}</p>
+          <DatePick date={date} setDate={setDate} />
         </Column>
         <Column>
           <Button
