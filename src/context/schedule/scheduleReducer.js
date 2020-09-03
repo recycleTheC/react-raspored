@@ -4,8 +4,10 @@ import {
   GET_TEACHERS,
   CREATE_TEACHER,
   GET_NOTES,
+  DELETE_NOTES,
   SET_NOTES,
   RESET_SCHEDULE,
+  UPDATE_NOTES,
 } from "../types";
 
 export default (state, action) => {
@@ -22,6 +24,8 @@ export default (state, action) => {
         schedule: [],
       };
     case GET_NOTES:
+    case UPDATE_NOTES:
+    case DELETE_NOTES:
       return {
         ...state,
         notes: action.payload,

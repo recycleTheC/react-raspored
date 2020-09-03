@@ -13,6 +13,8 @@ import {
   GET_NOTES,
   SET_NOTES,
   RESET_SCHEDULE,
+  DELETE_NOTES,
+  UPDATE_NOTES,
 } from "../types";
 
 const ScheduleState = (props) => {
@@ -149,6 +151,58 @@ const ScheduleState = (props) => {
     }
   };
 
+  // Update note
+
+  const updateNotes = async (id, classKey, classId, note) => {
+    setLoading();
+
+    const send = {
+      classId: classId,
+      classKey: classKey,
+      note: note,
+    };
+
+    const options = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.put(`/api/notes/${id}`, send, options);
+
+      dispatch({
+        type: UPDATE_NOTES,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_NOTES,
+        payload: [],
+      });
+    }
+  };
+
+  // Delete note
+
+  const deleteNote = async (id) => {
+    setLoading();
+
+    try {
+      const res = await axios.delete(`/api/notes/${id}`);
+
+      dispatch({
+        type: DELETE_NOTES,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: DELETE_NOTES,
+        payload: [],
+      });
+    }
+  };
+
   // Set loading state
 
   const setLoading = () => dispatch({ type: SET_LOADING });
@@ -200,6 +254,8 @@ const ScheduleState = (props) => {
         getTeachers,
         getNotes,
         setNotes,
+        deleteNote,
+        updateNotes,
         createTeacher,
       }}
     >

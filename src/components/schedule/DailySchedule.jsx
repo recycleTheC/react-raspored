@@ -8,13 +8,13 @@ import {
   Row,
   ButtonToolbar,
   ButtonGroup,
+  Button,
   ListGroupItem,
-  Dropdown,
 } from "react-bootstrap";
 import { v4 as uuid } from "uuid";
 import ReactMarkdown from "react-markdown";
 
-import AddNote from "../notes/AddNote";
+import EditNote from "../notes/EditNote";
 
 function DailySchedule({ date }) {
   const scheduleContext = useContext(ScheduleContext);
@@ -28,34 +28,15 @@ function DailySchedule({ date }) {
     <ListGroupItem key="toolbar">
       <ButtonToolbar>
         <ButtonGroup style={{ margin: "auto" }}>
-          <Dropdown>
-            <Dropdown.Toggle variant="outline-success" size="sm">
-              Bilješke
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={toggleModal}>
-                Dodaj bilješku
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <Dropdown>
-            <Dropdown.Toggle variant="outline-danger" size="sm">
-              Ispiti
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item>Dodaj ispit</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <Dropdown>
-            <Dropdown.Toggle variant="outline-info" size="sm">
-              Izmjene
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item>Dodaj izmjenu</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          <Button variant="outline-success" size="sm" onClick={toggleModal}>
+            Bilješke
+          </Button>
+          <Button variant="outline-danger" size="sm">
+            Ispiti
+          </Button>
+          <Button variant="outline-info" size="sm">
+            Izmjene
+          </Button>
         </ButtonGroup>
       </ButtonToolbar>
     </ListGroupItem>
@@ -147,7 +128,8 @@ function DailySchedule({ date }) {
           </ListGroup.Item>
         );
       })}
-      <AddNote show={showModal} close={toggleModal} date={date} />
+      {/*<AddNote show={showModal} close={toggleModal} date={date} />*/}
+      <EditNote show={showModal} close={toggleModal} date={date} />
     </ListGroup>
   );
 }

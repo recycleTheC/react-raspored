@@ -4,7 +4,9 @@ export const CHANGE_DATE = "CHANGE_DATE";
 export const SET_LOADING = "SET_LOADING";
 export const GET_TEACHERS = "GET_TEACHERS";
 export const GET_NOTES = "GET_NOTES";
+export const DELETE_NOTES = "DELETE_NOTES";
 export const SET_NOTES = "SET_NOTES";
+export const UPDATE_NOTES = "UPDATE_NOTES";
 export const CREATE_TEACHER = "CREATE_TEACHER";
 
 export const USER_LOADED = "USER_LOADED";
