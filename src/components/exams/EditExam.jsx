@@ -4,69 +4,68 @@ import { format } from "date-fns";
 import ScheduleContext from "../../context/schedule/scheduleContext";
 import { useForm } from "react-hook-form";
 
-function EditNote({ show, close, date }) {
+function EditExam({ show, close, date }) {
   const context = useContext(ScheduleContext);
-  const { setNotes, deleteNote, schedule, notes, updateNotes } = context;
+  const { createExam, deleteExam, schedule, exams, updateExam } = context;
 
   const { handleSubmit, register, errors, setValue, watch } = useForm({
-    defaultValues: { noteId: "0" },
+    defaultValues: { examId: "0" },
   });
 
   const onSubmit = (values) => {
     const classKey = values.class.split(":")[0];
     const classId = values.class.split(":")[1];
-    const note = values.note;
-    const id = values.noteId;
+    const content = values.content;
+    const id = values.examId;
 
     if (id === "0") {
-      setNotes(date, classKey, classId, note);
+      createExam(date, classKey, classId, content);
     } else {
-      updateNotes(id, classKey, classId, note);
+      updateExam(id, classKey, classId, content);
     }
-    close({ target: { name: "notes" } });
+    close({ target: { name: "exams" } });
   };
 
-  const { noteId } = watch();
+  const { examId } = watch();
 
   useEffect(() => {
-    if (noteId !== "0") {
-      const selected = notes.find((note) => note._id === noteId);
-
-      setValue("note", selected.note);
-      setValue("class", selected.classKey + ":" + selected.classId);
+    if (examId !== "0") {
+      const selected = exams.find((exam) => exam._id === examId);
+      setValue("content", selected.content);
+      setValue("class", selected.classKey._id + ":" + selected.classId);
     }
     // eslint-disable-next-line
-  }, [noteId]);
+  }, [examId]);
 
   const onDelete = (values) => {
-    deleteNote(values.noteId);
-    close({ target: { name: "notes" } });
+    deleteExam(values.examId);
+    close({ target: { name: "exams" } });
   };
 
   const hide = () => {
-    close({ target: { name: "notes" } });
+    close({ target: { name: "exams" } });
   };
 
   return (
     <Modal show={show} onHide={hide}>
       <Modal.Header closeButton>
-        <Modal.Title>Bilješke za {format(date, "dd.MM.yyyy.")}</Modal.Title>
+        <Modal.Title>Ispiti za {format(date, "dd.MM.yyyy.")}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Group>
             <Form.Control
               as="select"
-              name="noteId"
+              name="examId"
               ref={register({ required: "Obavezno" })}
             >
               <option key={0} value={0}>
-                Nova bilješka
+                Novi ispit
               </option>
-              {notes.map((x) => {
+              {exams.map((x) => {
                 return (
                   <option key={x._id} value={x._id}>
-                    Bilješka za {x.classId}. sat
+                    Ispit "{x.content}" ({x.classId}. sat)
                   </option>
                 );
               })}
@@ -95,30 +94,31 @@ function EditNote({ show, close, date }) {
           </Form.Group>
           <Form.Group controlId="textArea">
             <Form.Label>
-              Bilješka{errors.note && <small>({errors.note.message})</small>}
+              Sadržaj ispita
+              {errors.content && <small>({errors.content.message})</small>}
             </Form.Label>
             <Form.Control
               as="textarea"
               rows="4"
-              name="note"
+              name="content"
               ref={register({ required: "Obavezno" })}
             />
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        {noteId !== "0" && (
+        {examId !== "0" && (
           <Button variant="danger" onClick={handleSubmit(onDelete)}>
-            Obriši bilješku
+            Obriši ispit
           </Button>
         )}
 
         <Button variant="success" onClick={handleSubmit(onSubmit)}>
-          Spremi bilješku
+          Spremi ispit
         </Button>
       </Modal.Footer>
     </Modal>
   );
 }
 
-export default EditNote;
+export default EditExam;

@@ -15,6 +15,10 @@ import {
   RESET_SCHEDULE,
   DELETE_NOTES,
   UPDATE_NOTES,
+  CREATE_EXAM,
+  GET_EXAMS,
+  DELETE_EXAM,
+  UPDATE_EXAM,
 } from "../types";
 
 const ScheduleState = (props) => {
@@ -24,6 +28,7 @@ const ScheduleState = (props) => {
     loading: false,
     notes: [],
     status: {},
+    exams: [],
   };
 
   const [state, dispatch] = useReducer(ScheduleReducer, initialState);
@@ -37,26 +42,19 @@ const ScheduleState = (props) => {
       type: RESET_SCHEDULE,
     });
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
     try {
       const res = await axios.get(
-        `/api/schedule/${format(date, "yyyy-MM-dd")}`,
-        options
+        `/api/schedule/${format(date, "yyyy-MM-dd")}`
       );
 
       await getNotes(date);
+      await getExams(date);
 
       dispatch({
         type: GET_DAILY_SCHEDULE,
         payload: res.data,
       });
     } catch (err) {
-      console.log(err);
       dispatch({
         type: GET_DAILY_SCHEDULE,
         payload: { msg: "Raspored nije pronađen" },
@@ -67,24 +65,14 @@ const ScheduleState = (props) => {
   // Get notes
 
   const getNotes = async (date) => {
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
     try {
-      const res = await axios.get(
-        `/api/notes/${format(date, "yyyy-MM-dd")}`,
-        options
-      );
+      const res = await axios.get(`/api/notes/${format(date, "yyyy-MM-dd")}`);
 
       dispatch({
         type: GET_NOTES,
         payload: res.data,
       });
     } catch (err) {
-      console.log(err);
       dispatch({
         type: GET_NOTES,
         payload: [],
@@ -240,6 +228,105 @@ const ScheduleState = (props) => {
     }
   };
 
+  const createExam = async (date, classKey, classId, content) => {
+    setLoading();
+
+    const send = {
+      classId: classId,
+      classKey: classKey,
+      content: content,
+      date: format(date, "yyyy-MM-dd"),
+    };
+
+    const options = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.post(`/api/exam/`, send, options);
+
+      dispatch({
+        type: CREATE_EXAM,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: CREATE_EXAM,
+        payload: [],
+      });
+    }
+  };
+
+  const getExams = async (date) => {
+    try {
+      const res = await axios.get(`/api/exam/${format(date, "yyyy-MM-dd")}`);
+
+      dispatch({
+        type: GET_EXAMS,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: GET_EXAMS,
+        payload: [],
+      });
+    }
+  };
+
+  // Delete exam
+
+  const deleteExam = async (id) => {
+    setLoading();
+
+    try {
+      const res = await axios.delete(`/api/exam/${id}`);
+
+      dispatch({
+        type: DELETE_EXAM,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: DELETE_EXAM,
+        payload: [],
+      });
+    }
+  };
+
+  // Update exam
+
+  const updateExam = async (id, classKey, classId, content) => {
+    setLoading();
+
+    const send = {
+      classId: classId,
+      classKey: classKey,
+      content: content,
+    };
+
+    const options = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.put(`/api/exam/${id}`, send, options);
+
+      dispatch({
+        type: UPDATE_EXAM,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_EXAM,
+        payload: [],
+      });
+    }
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -248,6 +335,7 @@ const ScheduleState = (props) => {
         loading: state.loading,
         notes: state.notes,
         status: state.status,
+        exams: state.exams,
 
         getSchedule,
         setLoading,
@@ -257,6 +345,9 @@ const ScheduleState = (props) => {
         deleteNote,
         updateNotes,
         createTeacher,
+        createExam,
+        deleteExam,
+        updateExam,
       }}
     >
       {props.children}

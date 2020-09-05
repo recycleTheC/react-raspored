@@ -8,6 +8,10 @@ import {
   SET_NOTES,
   RESET_SCHEDULE,
   UPDATE_NOTES,
+  GET_EXAMS,
+  DELETE_EXAM,
+  UPDATE_EXAM,
+  CREATE_EXAM
 } from "../types";
 
 export default (state, action) => {
@@ -22,15 +26,11 @@ export default (state, action) => {
       return {
         ...state,
         schedule: [],
+        exams: [],
       };
     case GET_NOTES:
     case UPDATE_NOTES:
     case DELETE_NOTES:
-      return {
-        ...state,
-        notes: action.payload,
-        loading: false,
-      };
     case SET_NOTES:
       return {
         ...state,
@@ -53,6 +53,15 @@ export default (state, action) => {
       return {
         ...state,
         loading: true,
+      };
+    case CREATE_EXAM:
+    case GET_EXAMS:
+    case DELETE_EXAM:
+    case UPDATE_EXAM:
+      return {
+        ...state,
+        exams: action.payload,
+        loading: false,
       };
     default:
       return state;

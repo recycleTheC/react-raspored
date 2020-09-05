@@ -8,6 +8,10 @@ export const DELETE_NOTES = "DELETE_NOTES";
 export const SET_NOTES = "SET_NOTES";
 export const UPDATE_NOTES = "UPDATE_NOTES";
 export const CREATE_TEACHER = "CREATE_TEACHER";
+export const CREATE_EXAM = "CREATE_EXAM";
+export const GET_EXAMS = "GET_EXAMS";
+export const DELETE_EXAM = "DELETE_EXAM";
+export const UPDATE_EXAM = "UPDATE_EXAM";
 
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
