@@ -106,9 +106,11 @@ function DailySchedule({ date }) {
                   <Badge pill variant="success">
                     {timeStart} - {timeEnd}
                   </Badge>{" "}
-                  <Badge pill variant="light">
-                    lokacija: {location}
-                  </Badge>
+                  {location !== "-" && (
+                    <Badge pill variant="light">
+                      lokacija: {location}
+                    </Badge>
+                  )}
                 </div>
                 {x.class
                   .map((_class) => {
