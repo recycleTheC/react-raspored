@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import ScheduleContext from "../context/schedule/scheduleContext";
-import { addDays } from "date-fns";
+import { addDays, isToday } from "date-fns";
 
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
@@ -48,6 +48,20 @@ export default function Home() {
         </Column>
         <Column>
           <DatePick date={date} setDate={setDate} />
+          <br />
+          {!isToday(date) && (
+            <Button
+              onClick={() => {
+                setDate(new Date());
+              }}
+              variant="outline-warning"
+              size="sm"
+              className="py-0"
+              style={{ fontSize: "0.8em" }}
+            >
+              danas
+            </Button>
+          )}
         </Column>
         <Column>
           <Button
