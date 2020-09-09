@@ -11,7 +11,8 @@ import {
   GET_EXAMS,
   DELETE_EXAM,
   UPDATE_EXAM,
-  CREATE_EXAM
+  CREATE_EXAM,
+  GET_CHANGES,
 } from "../types";
 
 export default (state, action) => {
@@ -27,6 +28,7 @@ export default (state, action) => {
         ...state,
         schedule: [],
         exams: [],
+        changes: [],
       };
     case GET_NOTES:
     case UPDATE_NOTES:
@@ -61,6 +63,12 @@ export default (state, action) => {
       return {
         ...state,
         exams: action.payload,
+        loading: false,
+      };
+    case GET_CHANGES:
+      return {
+        ...state,
+        changes: action.payload,
         loading: false,
       };
     default:

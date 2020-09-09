@@ -19,6 +19,7 @@ import {
   GET_EXAMS,
   DELETE_EXAM,
   UPDATE_EXAM,
+  GET_CHANGES,
 } from "../types";
 
 const ScheduleState = (props) => {
@@ -29,6 +30,7 @@ const ScheduleState = (props) => {
     notes: [],
     status: {},
     exams: [],
+    changes: [],
   };
 
   const [state, dispatch] = useReducer(ScheduleReducer, initialState);
@@ -49,6 +51,7 @@ const ScheduleState = (props) => {
 
       await getNotes(date);
       await getExams(date);
+      await getChanges(date);
 
       dispatch({
         type: GET_DAILY_SCHEDULE,
@@ -327,6 +330,22 @@ const ScheduleState = (props) => {
     }
   };
 
+  const getChanges = async (date) => {
+    try {
+      const res = await axios.get(`/api/changes/${format(date, "yyyy-MM-dd")}`);
+
+      dispatch({
+        type: GET_CHANGES,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: GET_CHANGES,
+        payload: [],
+      });
+    }
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -336,6 +355,7 @@ const ScheduleState = (props) => {
         notes: state.notes,
         status: state.status,
         exams: state.exams,
+        changes: state.changes,
 
         getSchedule,
         setLoading,
@@ -348,6 +368,7 @@ const ScheduleState = (props) => {
         createExam,
         deleteExam,
         updateExam,
+        getChanges,
       }}
     >
       {props.children}

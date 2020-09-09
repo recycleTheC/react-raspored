@@ -12,6 +12,7 @@ export const CREATE_EXAM = "CREATE_EXAM";
 export const GET_EXAMS = "GET_EXAMS";
 export const DELETE_EXAM = "DELETE_EXAM";
 export const UPDATE_EXAM = "UPDATE_EXAM";
+export const GET_CHANGES = "GET_CHANGES";
 
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
