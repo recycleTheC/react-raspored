@@ -21,7 +21,7 @@ import EditExam from "../exams/EditExam";
 
 function DailySchedule({ date }) {
   const scheduleContext = useContext(ScheduleContext);
-  const { schedule, notes, exams } = scheduleContext;
+  const { schedule, notes, exams, changes } = scheduleContext;
   const authContext = useContext(AuthContext);
 
   const [showModal, setModal] = useState({ notes: false, exams: false });
@@ -31,6 +31,66 @@ function DailySchedule({ date }) {
       [e.target.name]: !showModal[e.target.name],
     });
   };
+
+  const scheduleItems = [];
+  console.clear();
+
+  for (var i = 0; i < schedule.length; i++) {
+    var row = schedule[i];
+
+    var location = row.location;
+    var timeStart = row.timeStart;
+    var timeEnd = row.timeEnd;
+    var scheduleId = row._id;
+    let classes = [];
+    let id = row.id;
+
+    /**
+     * @todo Investigate variable types in DailySchedule
+     * @body Functionality changes depenging if varaibale is `var` or `let`.
+     */
+
+    row.class.forEach((item) => {
+      classes.push(item);
+    });
+
+    for (var j = 0; j < classes.length; j++) {
+      let current = classes[j];
+      classes[j].changed = false;
+
+      for (var k = 0; k < changes.length; k++) {
+        if (changes[k].changed === current._id && changes[k].classId === id) {
+          classes[j] = changes[k].substitution;
+          classes[j].changed = true;
+          location = changes[k].location;
+        }
+      }
+
+      let classKey = current._id;
+      classes[j].notes = [];
+      classes[j].exams = [];
+
+      var classNotes = notes.filter(
+        (note) => note.classKey === classKey && note.classId === id
+      );
+
+      classNotes.forEach((item) => {
+        current.notes.push(item.note);
+      });
+
+      var classExams = exams.filter(
+        (exam) => exam.classKey._id === classKey && exam.classId === id
+      );
+
+      classExams.forEach((item) => {
+        current.exams.push(item.content);
+      });
+    }
+
+    const data = { scheduleId, id, location, timeStart, timeEnd, classes };
+
+    scheduleItems.push(data);
+  }
 
   const edit = (
     <ListGroupItem key="toolbar">
@@ -83,20 +143,36 @@ function DailySchedule({ date }) {
     </Alert>
   );
 
-  /**
-   * @todo Refactoring 'DailySchedule' component
-   * @body Component should be constructed from few smaller components (`ScheduleItem`, etc.)
-   */
+  const changesAlert = (
+    <Alert
+      variant="danger"
+      style={{
+        padding: "0.5rem",
+        margin: "0.4rem 0.4rem",
+      }}
+    >
+      <Row className="justify-content-center">
+        <div className="col-auto align-self-start">
+          <ExclamationTriangle color="red" size="24px" />
+        </div>
+        <Col className="col-auto">
+          <h5>Izmjene u rasporedu</h5>
+        </Col>
+        <div className="col-auto align-self-end"></div>
+      </Row>
+    </Alert>
+  );
 
   return (
     <ListGroup variant="flush" className="mt-2">
       {authContext.isAuthenticated && schedule.length > 0 && edit}
+      {changes.length > 0 && changesAlert}
       {exams.length > 0 && examList}
 
-      {schedule.map((x) => {
-        const { location, id, timeStart, timeEnd } = x;
+      {scheduleItems.map((row) => {
+        const { location, id, timeStart, timeEnd, classes } = row;
         return (
-          <ListGroup.Item key={x.id}>
+          <ListGroup.Item key={row.scheduleId}>
             <Row>
               <Col>
                 <div className="mb-2">
@@ -111,35 +187,35 @@ function DailySchedule({ date }) {
                       lokacija: {location}
                     </Badge>
                   )}
+                  {console.log(classes)}
+                  {classes.map((x) => x.changed).includes(true) && (
+                    <Badge pill variant="danger">
+                      izmjena
+                    </Badge>
+                  )}
                 </div>
-                {x.class
-                  .map((_class) => {
+                {classes
+                  .map((item) => {
                     return (
-                      <Row key={_class._id}>
-                        <Col md="6" key={_class._id} className="mb-2">
+                      <Row key={item._id}>
+                        <Col md="6" key={item._id} className="mb-2">
                           <div>
-                            <h4>{_class.name}</h4>
+                            <h4>{item.name} </h4>
+
                             <small>
-                              {_class.teacher
+                              {item.teacher
                                 .map((t) => t.name)
                                 .reduce((prev, curr) => [prev, " / ", curr])}
                             </small>
-                            {exams.find(
-                              (exam) => exam.classKey._id === _class._id
-                            ) && (
+                            {item.exams.length > 0 && (
                               <div className="mt-2">
                                 <Badge pill variant="danger">
                                   Ispit
                                 </Badge>{" "}
                                 <small>
-                                  {exams
-                                    .filter(
-                                      (exam) => exam.classKey._id === _class._id
-                                    )
-                                    .map((item) => (
-                                      <strong key={item._id}>
-                                        {item.content}
-                                      </strong>
+                                  {item.exams
+                                    .map((exam) => (
+                                      <strong key={uuid}>{exam}</strong>
                                     ))
                                     .reduce((prev, curr) => [
                                       prev,
@@ -152,38 +228,30 @@ function DailySchedule({ date }) {
                           </div>
                         </Col>
                         <Col md={6} sm={12} className="px-0">
-                          {notes.filter(
-                            (k) => k.classId === id && k.classKey === _class._id
-                          ).length > 0 && (
+                          {item.notes.length > 0 && (
                             <Col md="auto" sm={12}>
                               <Badge pill variant="light">
                                 Bilješke
                               </Badge>
                               <ul className="pl-4">
-                                {notes
-                                  .filter(
-                                    (k) =>
-                                      k.classId === id &&
-                                      k.classKey === _class._id
-                                  )
-                                  .map((n) => (
-                                    <li key={n._id}>
-                                      <small>
-                                        <ReactMarkdown
-                                          source={n.note}
-                                          renderers={{
-                                            paragraph: (props) => {
-                                              return (
-                                                <p className="mb-1" style={{}}>
-                                                  {props.children}
-                                                </p>
-                                              );
-                                            },
-                                          }}
-                                        />
-                                      </small>
-                                    </li>
-                                  ))}
+                                {item.notes.map((note) => (
+                                  <li key={uuid}>
+                                    <small>
+                                      <ReactMarkdown
+                                        source={note}
+                                        renderers={{
+                                          paragraph: (props) => {
+                                            return (
+                                              <p className="mb-1" style={{}}>
+                                                {props.children}
+                                              </p>
+                                            );
+                                          },
+                                        }}
+                                      />
+                                    </small>
+                                  </li>
+                                ))}
                               </ul>
                             </Col>
                           )}
