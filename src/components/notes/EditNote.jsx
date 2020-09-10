@@ -34,6 +34,8 @@ function EditNote({ schedule, show, close, date }) {
 
       setValue("note", selected.note);
       setValue("class", selected.classKey + ":" + selected.classId);
+    } else {
+      setValue("note", "");
     }
     // eslint-disable-next-line
   }, [noteId]);
