@@ -34,57 +34,52 @@ function DailySchedule({ date }) {
 
   const scheduleItems = [];
 
-  for (var i = 0; i < schedule.length; i++) {
-    var row = schedule[i];
+  for (let i = 0; i < schedule.length; i++) {
+    let row = { ...schedule[i] };
 
-    var location = row.location;
-    var timeStart = row.timeStart;
-    var timeEnd = row.timeEnd;
-    var scheduleId = row._id;
+    let location = row.location;
+    let timeStart = row.timeStart;
+    let timeEnd = row.timeEnd;
+    let scheduleId = row._id;
     let classes = [];
     let id = row.id;
-
-    /**
-     * @todo Investigate variable types in DailySchedule
-     * @body Functionality changes depenging if varaibale is `var` or `let`.
-     */
 
     row.class.forEach((item) => {
       classes.push(item);
     });
 
-    for (var j = 0; j < classes.length; j++) {
-      let current = classes[j];
-      classes[j].changed = false;
+    for (let j = 0; j < classes.length; j++) {
+      let current = { ...classes[j] };
+      current.changed = false;
 
-      for (var k = 0; k < changes.length; k++) {
+      for (let k = 0; k < changes.length; k++) {
         if (changes[k].changed === current._id && changes[k].classId === id) {
-          classes[j] = changes[k].substitution;
-          classes[j].changed = true;
+          current = changes[k].substitution;
+          current.changed = true;
           location = changes[k].location;
         }
       }
 
-      let classKey = classes[j]._id;
-      classes[j].notes = [];
-      classes[j].exams = [];
+      let classKey = current._id;
+      current.notes = [];
+      current.exams = [];
 
-      var classNotes = notes.filter(
+      let classNotes = notes.filter(
         (note) => note.classKey === classKey && note.classId === id
       );
-      // eslint-disable-next-line
       classNotes.forEach((item) => {
-        classes[j].notes.push(item.note);
+        current.notes.push(item.note);
       });
 
-      var classExams = exams.filter(
+      let classExams = exams.filter(
         (exam) => exam.classKey._id === classKey && exam.classId === id
       );
 
-      // eslint-disable-next-line
       classExams.forEach((item) => {
-        classes[j].exams.push(item.content);
+        current.exams.push(item.content);
       });
+
+      classes[j] = current;
     }
 
     const data = { scheduleId, id, location, timeStart, timeEnd, classes };
