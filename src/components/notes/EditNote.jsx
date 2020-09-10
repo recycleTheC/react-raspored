@@ -4,9 +4,9 @@ import { format } from "date-fns";
 import ScheduleContext from "../../context/schedule/scheduleContext";
 import { useForm } from "react-hook-form";
 
-function EditNote({ show, close, date }) {
+function EditNote({ schedule, show, close, date }) {
   const context = useContext(ScheduleContext);
-  const { setNotes, deleteNote, schedule, notes, updateNotes } = context;
+  const { setNotes, deleteNote, notes, updateNotes } = context;
 
   const { handleSubmit, register, errors, setValue, watch } = useForm({
     defaultValues: { noteId: "0" },
@@ -83,7 +83,7 @@ function EditNote({ show, close, date }) {
               ref={register({ required: "Obavezno" })}
             >
               {schedule.map((x) => {
-                return x.class.map((y) => {
+                return x.classes.map((y) => {
                   return (
                     <option key={y._id + ":" + x.id} value={y._id + ":" + x.id}>
                       {x.id}. sat - {y.name}

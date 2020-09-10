@@ -33,7 +33,6 @@ function DailySchedule({ date }) {
   };
 
   const scheduleItems = [];
-  console.clear();
 
   for (var i = 0; i < schedule.length; i++) {
     var row = schedule[i];
@@ -93,7 +92,7 @@ function DailySchedule({ date }) {
   }
 
   const edit = (
-    <ListGroupItem key="toolbar">
+    <ListGroupItem key="toolbar" style={{ border: 0 }}>
       <ButtonToolbar>
         <ButtonGroup style={{ margin: "auto" }}>
           <Button
@@ -144,23 +143,22 @@ function DailySchedule({ date }) {
   );
 
   const changesAlert = (
-    <Alert
-      variant="danger"
-      style={{
-        padding: "0.5rem",
-        margin: "0.4rem 0.4rem",
-      }}
-    >
-      <Row className="justify-content-center">
-        <div className="col-auto align-self-start">
-          <ExclamationTriangle color="red" size="24px" />
-        </div>
-        <Col className="col-auto">
-          <h5>Izmjene u rasporedu</h5>
-        </Col>
-        <div className="col-auto align-self-end"></div>
-      </Row>
-    </Alert>
+    <ListGroup.Item key="changes" className="text-center">
+      <Badge pill variant="danger">
+        <span
+          style={{
+            fontSize: "1rem",
+          }}
+        >
+          <ExclamationTriangle
+            color="yellow"
+            size="1rem"
+            style={{ marginBottom: "0.125em" }}
+          />{" "}
+          Izmjene u rasporedu
+        </span>
+      </Badge>
+    </ListGroup.Item>
   );
 
   return (
@@ -171,6 +169,7 @@ function DailySchedule({ date }) {
 
       {scheduleItems.map((row) => {
         const { location, id, timeStart, timeEnd, classes } = row;
+
         return (
           <ListGroup.Item key={row.scheduleId}>
             <Row>
@@ -187,7 +186,6 @@ function DailySchedule({ date }) {
                       lokacija: {location}
                     </Badge>
                   )}
-                  {console.log(classes)}
                   {classes.map((x) => x.changed).includes(true) && (
                     <Badge pill variant="danger">
                       izmjena
@@ -235,7 +233,7 @@ function DailySchedule({ date }) {
                               </Badge>
                               <ul className="pl-4">
                                 {item.notes.map((note) => (
-                                  <li key={uuid}>
+                                  <li key={uuid()}>
                                     <small>
                                       <ReactMarkdown
                                         source={note}
@@ -270,12 +268,14 @@ function DailySchedule({ date }) {
         name="notes"
         close={toggleModal}
         date={date}
+        schedule={scheduleItems}
       />
       <EditExam
         show={showModal.exams}
         name="exams"
         close={toggleModal}
         date={date}
+        schedule={scheduleItems}
       />
     </ListGroup>
   );

@@ -4,9 +4,9 @@ import { format } from "date-fns";
 import ScheduleContext from "../../context/schedule/scheduleContext";
 import { useForm } from "react-hook-form";
 
-function EditExam({ show, close, date }) {
+function EditExam({ schedule, show, close, date }) {
   const context = useContext(ScheduleContext);
-  const { createExam, deleteExam, schedule, exams, updateExam } = context;
+  const { createExam, deleteExam, exams, updateExam } = context;
 
   const { handleSubmit, register, errors, setValue, watch } = useForm({
     defaultValues: { examId: "0" },
@@ -82,7 +82,7 @@ function EditExam({ show, close, date }) {
               ref={register({ required: "Obavezno" })}
             >
               {schedule.map((x) => {
-                return x.class.map((y) => {
+                return x.classes.map((y) => {
                   return (
                     <option key={y._id + ":" + x.id} value={y._id + ":" + x.id}>
                       {x.id}. sat - {y.name}
