@@ -65,24 +65,25 @@ function DailySchedule({ date }) {
         }
       }
 
-      let classKey = current._id;
+      let classKey = classes[j]._id;
       classes[j].notes = [];
       classes[j].exams = [];
 
       var classNotes = notes.filter(
         (note) => note.classKey === classKey && note.classId === id
       );
-
+      // eslint-disable-next-line
       classNotes.forEach((item) => {
-        current.notes.push(item.note);
+        classes[j].notes.push(item.note);
       });
 
       var classExams = exams.filter(
         (exam) => exam.classKey._id === classKey && exam.classId === id
       );
 
+      // eslint-disable-next-line
       classExams.forEach((item) => {
-        current.exams.push(item.content);
+        classes[j].exams.push(item.content);
       });
     }
 
