@@ -1,145 +1,145 @@
-import React, { useReducer } from "react";
-import axios from "axios";
+import React, { useReducer } from 'react';
+import axios from 'axios';
 
-import AuthContext from "./authContext";
-import AuthReducer from "./authReducer";
+import AuthContext from './authContext';
+import AuthReducer from './authReducer';
 
-import setAuthToken from "../../utils/setAuthToken";
+import setAuthToken from '../../utils/setAuthToken';
 
 import {
-  USER_LOADED,
-  AUTH_ERROR,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT,
-  CLEAR_ERRORS,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-} from "../types";
+	USER_LOADED,
+	AUTH_ERROR,
+	LOGIN_SUCCESS,
+	LOGIN_FAIL,
+	LOGOUT,
+	CLEAR_ERRORS,
+	REGISTER_SUCCESS,
+	REGISTER_FAIL,
+} from '../types';
 
 const AuthState = (props) => {
-  const initialState = {
-    token: localStorage.getItem("token"),
-    isAuthenticated: null,
-    loading: true,
-    error: null,
-    user: null,
-  };
+	const initialState = {
+		token: localStorage.getItem('token'),
+		isAuthenticated: null,
+		loading: true,
+		error: null,
+		user: null,
+	};
 
-  const [state, dispatch] = useReducer(AuthReducer, initialState);
+	const [state, dispatch] = useReducer(AuthReducer, initialState);
 
-  // Load user
+	// Load user
 
-  const loadUser = async () => {
-    if (localStorage.token) {
-      setAuthToken(localStorage.token);
-    }
+	const loadUser = async () => {
+		if (localStorage.token) {
+			setAuthToken(localStorage.token);
+		}
 
-    try {
-      const res = await axios.get("/api/auth");
+		try {
+			const res = await axios.get('/api/auth');
 
-      dispatch({
-        type: USER_LOADED,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: AUTH_ERROR,
-      });
-    }
-  };
+			dispatch({
+				type: USER_LOADED,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: AUTH_ERROR,
+			});
+		}
+	};
 
-  // Register User
+	// Register User
 
-  /**
-   * @todo Implementing Registration
-   * @body Registration of new users **isn't allowed** while App is **in development** and should be implemented when ready for production.
-   */
-  const register = async (data) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+	/**
+	 * @todo Implementing Registration
+	 * @body Registration of new users **isn't allowed** while App is **in development** and should be implemented when ready for production.
+	 */
+	const register = async (data) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-    try {
-      const res = await axios.post("/api/users", data, config);
+		try {
+			const res = await axios.post('/api/users', data, config);
 
-      dispatch({
-        type: REGISTER_SUCCESS,
-        payload: res.data,
-      });
+			dispatch({
+				type: REGISTER_SUCCESS,
+				payload: res.data,
+			});
 
-      loadUser();
-    } catch (err) {
-      dispatch({
-        type: REGISTER_FAIL,
-        payload: err.response.data.msg,
-      });
-    }
-  };
+			await loadUser();
+		} catch (err) {
+			dispatch({
+				type: REGISTER_FAIL,
+				payload: err.response.data.msg,
+			});
+		}
+	};
 
-  // Login User
+	// Login User
 
-  const login = async (data) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+	const login = async (data) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-    try {
-      const res = await axios.post("/api/auth", data, config);
+		try {
+			const res = await axios.post('/api/auth', data, config);
 
-      dispatch({
-        type: LOGIN_SUCCESS,
-        payload: res.data,
-      });
+			dispatch({
+				type: LOGIN_SUCCESS,
+				payload: res.data,
+			});
 
-      loadUser();
-    } catch (err) {
-      dispatch({
-        type: LOGIN_FAIL,
-        payload: err.response.data.msg,
-      });
-    }
-  };
+			await loadUser();
+		} catch (err) {
+			dispatch({
+				type: LOGIN_FAIL,
+				payload: err.response.data.msg,
+			});
+		}
+	};
 
-  // Logout
+	// Logout
 
-  const logout = () => {
-    dispatch({
-      type: LOGOUT,
-    });
-  };
+	const logout = () => {
+		dispatch({
+			type: LOGOUT,
+		});
+	};
 
-  // Clear Errors
+	// Clear Errors
 
-  const clearErrors = () => {
-    dispatch({
-      type: CLEAR_ERRORS,
-    });
-  };
+	const clearErrors = () => {
+		dispatch({
+			type: CLEAR_ERRORS,
+		});
+	};
 
-  return (
-    <AuthContext.Provider
-      value={{
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
-        loading: state.loading,
-        error: state.error,
-        user: state.user,
+	return (
+		<AuthContext.Provider
+			value={{
+				token: state.token,
+				isAuthenticated: state.isAuthenticated,
+				loading: state.loading,
+				error: state.error,
+				user: state.user,
 
-        register,
-        login,
-        logout,
-        loadUser,
-        clearErrors,
-      }}
-    >
-      {props.children}
-    </AuthContext.Provider>
-  );
+				register,
+				login,
+				logout,
+				loadUser,
+				clearErrors,
+			}}
+		>
+			{props.children}
+		</AuthContext.Provider>
+	);
 };
 
 export default AuthState;
