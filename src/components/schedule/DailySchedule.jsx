@@ -34,7 +34,6 @@ function DailySchedule({ date }) {
 	};
 
 	const scheduleItems = [];
-	const typeColor = changes.length === 0 ? 'danger' : 'info';
 
 	for (let i = 0; i < schedule.length; i++) {
 		let row = { ...schedule[i] };
@@ -45,6 +44,7 @@ function DailySchedule({ date }) {
 		let scheduleId = row._id;
 		let classes = [];
 		let id = row.id;
+		let locationChanged = false;
 
 		row.class.forEach((item) => {
 			classes.push(item);
@@ -58,7 +58,11 @@ function DailySchedule({ date }) {
 				if (changes[k].changed === current._id && changes[k].classId === id) {
 					current = changes[k].substitution;
 					current.changed = true;
-					location = changes[k].location;
+
+					if (changes[k].location) {
+						location = changes[k].location;
+						locationChanged = true;
+					}
 				}
 			}
 
@@ -81,10 +85,12 @@ function DailySchedule({ date }) {
 				current.exams.push(item.content);
 			});
 
-			classes[j] = current;
+			classes[j] = { ...current };
 		}
 
 		const data = { scheduleId, id, location, timeStart, timeEnd, classes };
+
+		locationChanged && (data.locationChanged = locationChanged);
 
 		scheduleItems.push(data);
 	}
@@ -166,7 +172,14 @@ function DailySchedule({ date }) {
 			{exams.length > 0 && examList}
 
 			{scheduleItems.map((row) => {
-				const { location, id, timeStart, timeEnd, classes } = row;
+				const {
+					location,
+					locationChanged,
+					id,
+					timeStart,
+					timeEnd,
+					classes,
+				} = row;
 
 				return (
 					<ListGroup.Item key={row.scheduleId}>
@@ -186,7 +199,14 @@ function DailySchedule({ date }) {
 									</Badge>{' '}
 									{location !== '-' && (
 										<Badge pill variant='light'>
-											lokacija: {location}
+											lokacija: {location}{' '}
+											{locationChanged && (
+												<ExclamationTriangle
+													color='red'
+													size='0.8rem'
+													style={{ marginBottom: '0.125em' }}
+												/>
+											)}
 										</Badge>
 									)}
 									{classes.map((x) => x.changed).includes(true) && (
@@ -208,7 +228,7 @@ function DailySchedule({ date }) {
 																.reduce((prev, curr) => [prev, ' / ', curr])}
 														</small>{' '}
 														{item.type && (
-															<Badge pill variant={typeColor}>
+															<Badge pill variant='info'>
 																{item.type} smjer
 															</Badge>
 														)}
