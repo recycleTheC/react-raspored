@@ -56,13 +56,13 @@ function DailySchedule({ date }) {
 
 			for (let k = 0; k < changes.length; k++) {
 				if (changes[k].changed === current._id && changes[k].classId === id) {
-					current = changes[k].substitution;
+					current = { ...changes[k].substitution };
 					current.changed = true;
+				}
 
-					if (changes[k].location) {
-						location = changes[k].location;
-						locationChanged = true;
-					}
+				if (changes[k].classId === id && changes[k].location) {
+					location = changes[k].location;
+					locationChanged = true;
 				}
 			}
 
@@ -221,7 +221,16 @@ function DailySchedule({ date }) {
 											<Row key={item._id}>
 												<Col md='6' key={item._id} className='mb-2'>
 													<div>
-														<h4>{item.name} </h4>
+														<h4>
+															{item.name}{' '}
+															{item.changed && (
+																<ExclamationTriangle
+																	color='red'
+																	size='0.8rem'
+																	style={{ marginBottom: '0.125em' }}
+																/>
+															)}
+														</h4>
 														<small>
 															{item.teacher
 																.map((t) => t.name)
