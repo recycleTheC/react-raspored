@@ -34,6 +34,7 @@ function DailySchedule({ date }) {
 	};
 
 	const scheduleItems = [];
+	const typeColor = changes.length === 0 ? 'danger' : 'info';
 
 	for (let i = 0; i < schedule.length; i++) {
 		let row = { ...schedule[i] };
@@ -201,12 +202,16 @@ function DailySchedule({ date }) {
 												<Col md='6' key={item._id} className='mb-2'>
 													<div>
 														<h4>{item.name} </h4>
-
 														<small>
 															{item.teacher
 																.map((t) => t.name)
 																.reduce((prev, curr) => [prev, ' / ', curr])}
-														</small>
+														</small>{' '}
+														{item.type && (
+															<Badge pill variant={typeColor}>
+																{item.type} smjer
+															</Badge>
+														)}
 														{item.exams.length > 0 && (
 															<div className='mt-2'>
 																<Badge pill variant='danger'>
