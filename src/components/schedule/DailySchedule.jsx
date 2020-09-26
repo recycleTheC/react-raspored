@@ -12,6 +12,8 @@ import {
 	Button,
 	ListGroupItem,
 	Alert,
+	Popover,
+	OverlayTrigger,
 } from 'react-bootstrap';
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
@@ -19,13 +21,18 @@ import { ExclamationTriangle } from 'react-bootstrap-icons';
 
 import EditNote from '../notes/EditNote';
 import EditExam from '../exams/EditExam';
+import EditChanges from '../changes/EditChanges';
 
 function DailySchedule({ date }) {
 	const scheduleContext = useContext(ScheduleContext);
-	const { schedule, notes, exams, changes } = scheduleContext;
+	const { schedule, exams, changes, loading } = scheduleContext;
 	const authContext = useContext(AuthContext);
 
-	const [showModal, setModal] = useState({ notes: false, exams: false });
+	const [showModal, setModal] = useState({
+		notes: false,
+		exams: false,
+		changes: false,
+	});
 
 	const toggleModal = (e) => {
 		setModal({
@@ -33,67 +40,21 @@ function DailySchedule({ date }) {
 		});
 	};
 
-	const scheduleItems = [];
-
-	for (let i = 0; i < schedule.length; i++) {
-		let row = { ...schedule[i] };
-
-		let location = row.location;
-		let timeStart = row.timeStart;
-		let timeEnd = row.timeEnd;
-		let scheduleId = row._id;
-		let classes = [];
-		let id = row.id;
-		let locationChanged = false;
-
-		row.class.forEach((item) => {
-			classes.push(item);
-		});
-
-		for (let j = 0; j < classes.length; j++) {
-			let current = { ...classes[j] };
-			current.changed = false;
-
-			for (let k = 0; k < changes.length; k++) {
-				if (changes[k].changed === current._id && changes[k].classId === id) {
-					current = { ...changes[k].substitution };
-					current.changed = true;
-				}
-
-				if (changes[k].classId === id && changes[k].location) {
-					location = changes[k].location;
-					locationChanged = true;
-				}
-			}
-
-			let classKey = current._id;
-			current.notes = [];
-			current.exams = [];
-
-			let classNotes = notes.filter(
-				(note) => note.classKey === classKey && note.classId === id
-			);
-			classNotes.forEach((item) => {
-				current.notes.push(item.note);
-			});
-
-			let classExams = exams.filter(
-				(exam) => exam.classKey._id === classKey && exam.classId === id
-			);
-
-			classExams.forEach((item) => {
-				current.exams.push(item.content);
-			});
-
-			classes[j] = { ...current };
-		}
-
-		const data = { scheduleId, id, location, timeStart, timeEnd, classes };
-
-		locationChanged && (data.locationChanged = locationChanged);
-
-		scheduleItems.push(data);
-	}
+	const renderTooltip = (props) => (
+		<Popover id='popover-basic' {...props}>
+			<Popover.Content>
+				{changes.map((item) => {
+					return (
+						<p key={item._id}>
+							{item.classId}. sat -{' '}
+							{item.substitution && item.substitution.name}{' '}
+							{item.location !== '-' && `(${item.location})`}
+						</p>
+					);
+				})}
+			</Popover.Content>
+		</Popover>
+	);
 
 	const edit = (
 		<ListGroupItem key='toolbar' style={{ border: 0 }}>
@@ -115,7 +76,12 @@ function DailySchedule({ date }) {
 					>
 						Ispiti
 					</Button>
-					<Button variant='outline-info' size='sm'>
+					<Button
+						variant='outline-info'
+						size='sm'
+						onClick={toggleModal}
+						name='changes'
+					>
 						Izmjene
 					</Button>
 				</ButtonGroup>
@@ -148,30 +114,36 @@ function DailySchedule({ date }) {
 
 	const changesAlert = (
 		<ListGroup.Item key='changes' className='text-center'>
-			<Badge pill variant='danger'>
-				<span
-					style={{
-						fontSize: '1rem',
-					}}
-				>
-					<ExclamationTriangle
-						color='yellow'
-						size='1rem'
-						style={{ marginBottom: '0.125em' }}
-					/>{' '}
-					Izmjene u rasporedu
-				</span>
-			</Badge>
+			<OverlayTrigger
+				placement='bottom'
+				delay={{ show: 250, hide: 400 }}
+				overlay={renderTooltip}
+			>
+				<Badge pill variant='danger'>
+					<span
+						style={{
+							fontSize: '1rem',
+						}}
+					>
+						<ExclamationTriangle
+							color='yellow'
+							size='1rem'
+							style={{ marginBottom: '0.125em' }}
+						/>{' '}
+						Izmjene u rasporedu
+					</span>
+				</Badge>
+			</OverlayTrigger>
 		</ListGroup.Item>
 	);
 
 	return (
 		<ListGroup variant='flush' className='mt-2'>
-			{authContext.isAuthenticated && schedule.length > 0 && edit}
-			{changes.length > 0 && changesAlert}
-			{exams.length > 0 && examList}
+			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
+			{!loading && changes.length > 0 && changesAlert}
+			{!loading && exams.length > 0 && examList}
 
-			{scheduleItems.map((row) => {
+			{schedule.map((row) => {
 				const {
 					location,
 					locationChanged,
@@ -232,9 +204,10 @@ function DailySchedule({ date }) {
 															)}
 														</h4>
 														<small>
-															{item.teacher
-																.map((t) => t.name)
-																.reduce((prev, curr) => [prev, ' / ', curr])}
+															{item.teacher &&
+																item.teacher
+																	.map((t) => t.name)
+																	.reduce((prev, curr) => [prev, ' / ', curr])}
 														</small>{' '}
 														{item.type && (
 															<Badge pill variant='info'>
@@ -244,12 +217,12 @@ function DailySchedule({ date }) {
 														{item.exams.length > 0 && (
 															<div className='mt-2'>
 																<Badge pill variant='danger'>
-																	Ispit
+																	Pisana provjera
 																</Badge>{' '}
 																<small>
 																	{item.exams
 																		.map((exam) => (
-																			<strong key={uuid}>{exam}</strong>
+																			<strong key={uuid()}>{exam}</strong>
 																		))
 																		.reduce((prev, curr) => [
 																			prev,
@@ -299,20 +272,28 @@ function DailySchedule({ date }) {
 					</ListGroup.Item>
 				);
 			})}
-			<EditNote
-				show={showModal.notes}
-				name='notes'
-				close={toggleModal}
-				date={date}
-				schedule={scheduleItems}
-			/>
-			<EditExam
-				show={showModal.exams}
-				name='exams'
-				close={toggleModal}
-				date={date}
-				schedule={scheduleItems}
-			/>
+			{!loading && (
+				<>
+					<EditNote
+						show={showModal.notes}
+						name='notes'
+						close={toggleModal}
+						date={date}
+					/>
+					<EditExam
+						show={showModal.exams}
+						name='exams'
+						close={toggleModal}
+						date={date}
+					/>
+					<EditChanges
+						show={showModal.changes}
+						name='changes'
+						close={toggleModal}
+						date={date}
+					/>
+				</>
+			)}
 		</ListGroup>
 	);
 }

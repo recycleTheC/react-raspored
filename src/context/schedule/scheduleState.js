@@ -1,379 +1,600 @@
-import React, { useReducer } from "react";
-import axios from "axios";
-import { format } from "date-fns";
+import React, { useReducer, useEffect } from 'react';
+import axios from 'axios';
+import { format } from 'date-fns';
 
-import ScheduleContext from "./scheduleContext";
-import ScheduleReducer from "./scheduleReducer";
+import ScheduleContext from './scheduleContext';
+import ScheduleReducer from './scheduleReducer';
 
 import {
-  GET_DAILY_SCHEDULE,
-  SET_LOADING,
-  GET_TEACHERS,
-  CREATE_TEACHER,
-  GET_NOTES,
-  SET_NOTES,
-  RESET_SCHEDULE,
-  DELETE_NOTES,
-  UPDATE_NOTES,
-  CREATE_EXAM,
-  GET_EXAMS,
-  DELETE_EXAM,
-  UPDATE_EXAM,
-  GET_CHANGES,
-} from "../types";
+	GET_SCHEDULE,
+	GET_DAILY_SCHEDULE,
+	SET_LOADING,
+	GET_TEACHERS,
+	CREATE_TEACHER,
+	GET_NOTES,
+	SET_NOTES,
+	RESET_SCHEDULE,
+	DELETE_NOTES,
+	UPDATE_NOTES,
+	CREATE_EXAM,
+	GET_EXAMS,
+	DELETE_EXAM,
+	UPDATE_EXAM,
+	GET_CHANGES,
+	CREATE_CHANGE,
+	UPDATE_CHANGE,
+	DELETE_CHANGE,
+	GET_CLASSES,
+} from '../types';
 
 const ScheduleState = (props) => {
-  const initialState = {
-    schedule: [],
-    teachers: [],
-    loading: false,
-    notes: [],
-    status: {},
-    exams: [],
-    changes: [],
-  };
+	const initialState = {
+		schedule: [],
+		teachers: [],
+		loading: false,
+		notes: [],
+		status: {},
+		exams: [],
+		changes: [],
+		rawSchedule: [],
+		classes: [],
+	};
 
-  const [state, dispatch] = useReducer(ScheduleReducer, initialState);
+	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
 
-  // Get schedule
+	useEffect(() => {
+		prepareSchedule();
+		// eslint-disable-next-line
+	}, [state.rawSchedule, state.changes, state.notes, state.exams]);
 
-  const getSchedule = async (date) => {
-    setLoading();
+	// Get schedule
 
-    dispatch({
-      type: RESET_SCHEDULE,
-    });
+	const clearStorage = async () => {
+		dispatch({
+			type: RESET_SCHEDULE,
+		});
+	};
 
-    try {
-      const res = await axios.get(
-        `/api/schedule/${format(date, "yyyy-MM-dd")}`
-      );
+	const prepareSchedule = () => {
+		setLoading();
 
-      await getNotes(date);
-      await getExams(date);
-      await getChanges(date);
+		var scheduleItems = [];
 
-      dispatch({
-        type: GET_DAILY_SCHEDULE,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_DAILY_SCHEDULE,
-        payload: { msg: "Raspored nije pronađen" },
-      });
-    }
-  };
+		if (!state.rawSchedule.msg) {
+			const schedule = state.rawSchedule.slice();
 
-  // Get notes
+			for (let i = 0; i < schedule.length; i++) {
+				let row = { ...schedule[i] };
 
-  const getNotes = async (date) => {
-    try {
-      const res = await axios.get(`/api/notes/${format(date, "yyyy-MM-dd")}`);
+				let location = row.location;
+				let timeStart = row.timeStart;
+				let timeEnd = row.timeEnd;
+				let scheduleId = row._id;
+				let classes = [];
+				let id = row.id;
+				let locationChanged = false;
 
-      dispatch({
-        type: GET_NOTES,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_NOTES,
-        payload: [],
-      });
-    }
-  };
+				row.class.forEach((item) => {
+					classes.push(item);
+				});
 
-  // Get list of all teachers
+				for (let j = 0; j < classes.length; j++) {
+					let current = { ...classes[j] };
+					current.changed = false;
 
-  const getTeachers = async () => {
-    setLoading();
+					for (let k = 0; k < state.changes.length; k++) {
+						if (
+							state.changes[k].changed === current._id &&
+							state.changes[k].classId === id
+						) {
+							const regularId = current._id;
+							current = { ...state.changes[k].substitution };
+							current.changed = true;
+							current.regular = regularId;
+						}
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+						if (state.changes[k].classId === id && state.changes[k].location) {
+							location = state.changes[k].location;
+							locationChanged = true;
+						}
+					}
 
-    try {
-      const res = await axios.get(`/api/teacher/`, options);
+					let classKey = current._id;
+					current.notes = [];
+					current.exams = [];
 
-      dispatch({
-        type: GET_TEACHERS,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_TEACHERS,
-        payload: [],
-      });
-    }
-  };
+					let classNotes = state.notes.filter(
+						(note) => note.classKey === classKey && note.classId === id
+					);
+					classNotes.forEach((item) => {
+						current.notes.push(item.note);
+					});
 
-  // Set new note
+					let classExams = state.exams.filter(
+						(exam) => exam.classKey._id === classKey && exam.classId === id
+					);
 
-  const setNotes = async (date, classKey, id, note) => {
-    setLoading();
+					classExams.forEach((item) => {
+						current.exams.push(item.content);
+					});
 
-    const send = {
-      classId: id,
-      classKey: classKey,
-      note: note,
-      date: format(date, "yyyy-MM-dd"),
-    };
+					classes[j] = { ...current };
+				}
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+				const data = {
+					scheduleId,
+					id,
+					location,
+					timeStart,
+					timeEnd,
+					classes,
+				};
 
-    try {
-      const res = await axios.post(`/api/notes/`, send, options);
+				locationChanged && (data.locationChanged = locationChanged);
 
-      dispatch({
-        type: SET_NOTES,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: SET_NOTES,
-        payload: [],
-      });
-    }
-  };
+				scheduleItems.push(data);
+			}
+		} else {
+			scheduleItems = { ...state.rawSchedule };
+		}
 
-  // Update note
+		dispatch({
+			type: GET_SCHEDULE,
+			payload: scheduleItems,
+		});
+	};
 
-  const updateNotes = async (id, classKey, classId, note) => {
-    setLoading();
+	const getSchedule = async (date) => {
+		setLoading();
 
-    const send = {
-      classId: classId,
-      classKey: classKey,
-      note: note,
-    };
+		await clearStorage();
+		await getExams(date);
+		await getNotes(date);
+		await getChanges(date);
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+		setLoading();
 
-    try {
-      const res = await axios.put(`/api/notes/${id}`, send, options);
+		try {
+			const res = await axios.get(
+				`/api/schedule/${format(date, 'yyyy-MM-dd')}`
+			);
 
-      dispatch({
-        type: UPDATE_NOTES,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: UPDATE_NOTES,
-        payload: [],
-      });
-    }
-  };
+			dispatch({
+				type: GET_DAILY_SCHEDULE,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_DAILY_SCHEDULE,
+				payload: { msg: 'Raspored nije pronađen' },
+			});
+		}
+	};
 
-  // Delete note
+	// Get notes
 
-  const deleteNote = async (id) => {
-    setLoading();
+	const getNotes = async (date) => {
+		setLoading();
+		try {
+			const res = await axios.get(`/api/notes/${format(date, 'yyyy-MM-dd')}`);
 
-    try {
-      const res = await axios.delete(`/api/notes/${id}`);
+			dispatch({
+				type: GET_NOTES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_NOTES,
+				payload: [],
+			});
+		}
+	};
 
-      dispatch({
-        type: DELETE_NOTES,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: DELETE_NOTES,
-        payload: [],
-      });
-    }
-  };
+	// Get list of all teachers
 
-  // Set loading state
+	const getTeachers = async () => {
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-  const setLoading = () => dispatch({ type: SET_LOADING });
+		try {
+			const res = await axios.get('/api/teacher/', options);
 
-  // Create teacher
+			dispatch({
+				type: GET_TEACHERS,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_TEACHERS,
+				payload: [],
+			});
+		}
+	};
 
-  const createTeacher = async (name) => {
-    setLoading();
+	// Set new note
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+	const setNotes = async (date, classKey, id, note) => {
+		setLoading();
 
-    try {
-      const res = await axios.post(`/api/teacher/`, { name }, options);
-      dispatch({
-        type: CREATE_TEACHER,
-        payload: {
-          msg: "Predavač dodan u bazu podataka",
-          type: "success",
-          response: res.data,
-        },
-      });
-    } catch (error) {
-      dispatch({
-        type: CREATE_TEACHER,
-        payload: {
-          msg: "Predavač nije dodan u bazu podataka",
-          type: "warning",
-          response: error.data,
-        },
-      });
-    }
-  };
+		const send = {
+			classId: id,
+			classKey: classKey,
+			note: note,
+			date: format(date, 'yyyy-MM-dd'),
+		};
 
-  const createExam = async (date, classKey, classId, content) => {
-    setLoading();
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-    const send = {
-      classId: classId,
-      classKey: classKey,
-      content: content,
-      date: format(date, "yyyy-MM-dd"),
-    };
+		try {
+			const res = await axios.post('/api/notes/', send, options);
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+			dispatch({
+				type: SET_NOTES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: SET_NOTES,
+				payload: [],
+			});
+		}
+	};
 
-    try {
-      const res = await axios.post(`/api/exam/`, send, options);
+	// Update note
 
-      dispatch({
-        type: CREATE_EXAM,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: CREATE_EXAM,
-        payload: [],
-      });
-    }
-  };
+	const updateNotes = async (id, classKey, classId, note) => {
+		setLoading();
 
-  const getExams = async (date) => {
-    try {
-      const res = await axios.get(`/api/exam/${format(date, "yyyy-MM-dd")}`);
+		const send = {
+			classId: classId,
+			classKey: classKey,
+			note: note,
+		};
 
-      dispatch({
-        type: GET_EXAMS,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_EXAMS,
-        payload: [],
-      });
-    }
-  };
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-  // Delete exam
+		try {
+			const res = await axios.put(`/api/notes/${id}`, send, options);
 
-  const deleteExam = async (id) => {
-    setLoading();
+			dispatch({
+				type: UPDATE_NOTES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: UPDATE_NOTES,
+				payload: [],
+			});
+		}
+	};
 
-    try {
-      const res = await axios.delete(`/api/exam/${id}`);
+	// Delete note
 
-      dispatch({
-        type: DELETE_EXAM,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: DELETE_EXAM,
-        payload: [],
-      });
-    }
-  };
+	const deleteNote = async (id) => {
+		setLoading();
 
-  // Update exam
+		try {
+			const res = await axios.delete(`/api/notes/${id}`);
 
-  const updateExam = async (id, classKey, classId, content) => {
-    setLoading();
+			dispatch({
+				type: DELETE_NOTES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: DELETE_NOTES,
+				payload: [],
+			});
+		}
+	};
 
-    const send = {
-      classId: classId,
-      classKey: classKey,
-      content: content,
-    };
+	// Set loading state
 
-    const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+	const setLoading = () => {
+		dispatch({ type: SET_LOADING });
+	};
 
-    try {
-      const res = await axios.put(`/api/exam/${id}`, send, options);
+	// Create teacher
 
-      dispatch({
-        type: UPDATE_EXAM,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: UPDATE_EXAM,
-        payload: [],
-      });
-    }
-  };
+	const createTeacher = async (name) => {
+		setLoading();
 
-  const getChanges = async (date) => {
-    try {
-      const res = await axios.get(`/api/changes/${format(date, "yyyy-MM-dd")}`);
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-      dispatch({
-        type: GET_CHANGES,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_CHANGES,
-        payload: [],
-      });
-    }
-  };
+		try {
+			const res = await axios.post('/api/teacher/', { name }, options);
+			dispatch({
+				type: CREATE_TEACHER,
+				payload: {
+					msg: 'Predavač dodan u bazu podataka',
+					type: 'success',
+					response: res.data,
+				},
+			});
+		} catch (error) {
+			dispatch({
+				type: CREATE_TEACHER,
+				payload: {
+					msg: 'Predavač nije dodan u bazu podataka',
+					type: 'warning',
+					response: error.data,
+				},
+			});
+		}
+	};
 
-  return (
-    <ScheduleContext.Provider
-      value={{
-        schedule: state.schedule,
-        teachers: state.teachers,
-        loading: state.loading,
-        notes: state.notes,
-        status: state.status,
-        exams: state.exams,
-        changes: state.changes,
+	const createExam = async (date, classKey, classId, content) => {
+		setLoading();
 
-        getSchedule,
-        setLoading,
-        getTeachers,
-        getNotes,
-        setNotes,
-        deleteNote,
-        updateNotes,
-        createTeacher,
-        createExam,
-        deleteExam,
-        updateExam,
-        getChanges,
-      }}
-    >
-      {props.children}
-    </ScheduleContext.Provider>
-  );
+		const send = {
+			classId: classId,
+			classKey: classKey,
+			content: content,
+			date: format(date, 'yyyy-MM-dd'),
+		};
+
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.post('/api/exam/', send, options);
+
+			dispatch({
+				type: CREATE_EXAM,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: CREATE_EXAM,
+				payload: [],
+			});
+		}
+	};
+
+	const getExams = async (date) => {
+		setLoading();
+		try {
+			const res = await axios.get(`/api/exam/${format(date, 'yyyy-MM-dd')}`);
+
+			dispatch({
+				type: GET_EXAMS,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_EXAMS,
+				payload: [],
+			});
+		}
+	};
+
+	// Delete exam
+
+	const deleteExam = async (id) => {
+		setLoading();
+
+		try {
+			const res = await axios.delete(`/api/exam/${id}`);
+
+			dispatch({
+				type: DELETE_EXAM,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: DELETE_EXAM,
+				payload: [],
+			});
+		}
+	};
+
+	// Update exam
+
+	const updateExam = async (id, classKey, classId, content) => {
+		setLoading();
+
+		const send = {
+			classId: classId,
+			classKey: classKey,
+			content: content,
+		};
+
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.put(`/api/exam/${id}`, send, options);
+
+			dispatch({
+				type: UPDATE_EXAM,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: UPDATE_EXAM,
+				payload: [],
+			});
+		}
+	};
+
+	const getChanges = async (date) => {
+		setLoading();
+		try {
+			const res = await axios.get(`/api/changes/${format(date, 'yyyy-MM-dd')}`);
+
+			dispatch({
+				type: GET_CHANGES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_CHANGES,
+				payload: [],
+			});
+		}
+	};
+
+	const createChange = async (date, id, changed, substitution, location) => {
+		setLoading();
+
+		const send = {
+			date: format(date, 'yyyy-MM-dd'),
+			classId: parseInt(id),
+		};
+
+		if (changed) send.changed = changed;
+		if (substitution) send.substitution = substitution;
+		if (location) send.location = location;
+
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.post('/api/changes/', send, options);
+
+			dispatch({
+				type: CREATE_CHANGE,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: CREATE_CHANGE,
+				payload: [],
+			});
+		}
+	};
+
+	const deleteChange = async (changeId) => {
+		setLoading();
+
+		try {
+			const res = await axios.delete(`/api/changes/${changeId}`);
+
+			dispatch({
+				type: DELETE_CHANGE,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: DELETE_CHANGE,
+				payload: [],
+			});
+		}
+	};
+
+	const updateChange = async (
+		changeId,
+		id,
+		changed,
+		substitution,
+		location
+	) => {
+		setLoading();
+
+		const send = {
+			classId: parseInt(id),
+		};
+
+		if (changed) send.changed = changed;
+		if (substitution) send.substitution = substitution;
+		if (location) send.location = location;
+
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.put(`/api/changes/${changeId}`, send, options);
+
+			dispatch({
+				type: UPDATE_CHANGE,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: UPDATE_CHANGE,
+				payload: [],
+			});
+		}
+	};
+
+	const getClasses = async () => {
+		setLoading();
+
+		try {
+			const res = await axios.get('/api/class/');
+
+			dispatch({
+				type: GET_CLASSES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_CLASSES,
+				payload: [],
+			});
+		}
+	};
+
+	return (
+		<ScheduleContext.Provider
+			value={{
+				schedule: state.schedule,
+				teachers: state.teachers,
+				loading: state.loading,
+				notes: state.notes,
+				status: state.status,
+				exams: state.exams,
+				changes: state.changes,
+				classes: state.classes,
+
+				getSchedule,
+				setLoading,
+				getTeachers,
+				getNotes,
+				setNotes,
+				deleteNote,
+				updateNotes,
+				createTeacher,
+				createExam,
+				deleteExam,
+				updateExam,
+				getChanges,
+				createChange,
+				updateChange,
+				deleteChange,
+				getClasses,
+			}}
+		>
+			{props.children}
+		</ScheduleContext.Provider>
+	);
 };
 
 export default ScheduleState;
