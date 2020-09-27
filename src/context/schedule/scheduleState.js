@@ -38,22 +38,22 @@ const ScheduleState = (props) => {
 		changes: [],
 		rawSchedule: [],
 		classes: [],
+		reload: false,
 	};
 
 	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
 
-	useEffect(() => {
+	/*useEffect(() => {
 		prepareSchedule();
 		// eslint-disable-next-line
-	}, [state.rawSchedule, state.changes, state.notes, state.exams]);
+	}, [state.rawSchedule, state.changes, state.notes, state.exams]);*/
+
+	useEffect(() => {
+		if (state.reload) prepareSchedule();
+		// eslint-disable-next-line
+	}, [state.reload]);
 
 	// Get schedule
-
-	const clearStorage = async () => {
-		dispatch({
-			type: RESET_SCHEDULE,
-		});
-	};
 
 	const prepareSchedule = () => {
 		setLoading();
@@ -144,15 +144,19 @@ const ScheduleState = (props) => {
 		});
 	};
 
-	const getSchedule = async (date) => {
-		setLoading();
+	const clearSchedule = () => {
+		dispatch({
+			type: RESET_SCHEDULE,
+		});
+	};
 
-		await clearStorage();
+	const getSchedule = async (date) => {
+		clearSchedule();
+		await setLoading();
+
 		await getExams(date);
 		await getNotes(date);
 		await getChanges(date);
-
-		setLoading();
 
 		try {
 			const res = await axios.get(
@@ -174,7 +178,6 @@ const ScheduleState = (props) => {
 	// Get notes
 
 	const getNotes = async (date) => {
-		setLoading();
 		try {
 			const res = await axios.get(`/api/notes/${format(date, 'yyyy-MM-dd')}`);
 
@@ -301,7 +304,7 @@ const ScheduleState = (props) => {
 
 	// Set loading state
 
-	const setLoading = () => {
+	const setLoading = async () => {
 		dispatch({ type: SET_LOADING });
 	};
 
@@ -370,7 +373,6 @@ const ScheduleState = (props) => {
 	};
 
 	const getExams = async (date) => {
-		setLoading();
 		try {
 			const res = await axios.get(`/api/exam/${format(date, 'yyyy-MM-dd')}`);
 
@@ -439,7 +441,6 @@ const ScheduleState = (props) => {
 	};
 
 	const getChanges = async (date) => {
-		setLoading();
 		try {
 			const res = await axios.get(`/api/changes/${format(date, 'yyyy-MM-dd')}`);
 
@@ -545,8 +546,6 @@ const ScheduleState = (props) => {
 	};
 
 	const getClasses = async () => {
-		setLoading();
-
 		try {
 			const res = await axios.get('/api/class/');
 
@@ -590,6 +589,7 @@ const ScheduleState = (props) => {
 				updateChange,
 				deleteChange,
 				getClasses,
+				clearSchedule,
 			}}
 		>
 			{props.children}

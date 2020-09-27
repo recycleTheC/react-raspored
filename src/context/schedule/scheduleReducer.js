@@ -28,12 +28,14 @@ export default (state, action) => {
 				...state,
 				schedule: action.payload,
 				loading: false,
+				reload: false,
 			};
 
 		case GET_DAILY_SCHEDULE:
 			return {
 				...state,
 				rawSchedule: action.payload,
+				reload: true,
 			};
 
 		case RESET_SCHEDULE:
@@ -58,6 +60,7 @@ export default (state, action) => {
 				...state,
 				notes: action.payload,
 				loading: false,
+				reload: true,
 			};
 
 		case GET_TEACHERS:
@@ -91,6 +94,7 @@ export default (state, action) => {
 				...state,
 				exams: action.payload,
 				loading: false,
+				reload: true,
 			};
 
 		case GET_CHANGES:
@@ -105,6 +109,7 @@ export default (state, action) => {
 				...state,
 				changes: action.payload,
 				loading: false,
+				reload: true,
 			};
 
 		default:
