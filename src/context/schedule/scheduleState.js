@@ -464,8 +464,11 @@ const ScheduleState = (props) => {
 			classId: parseInt(id),
 		};
 
-		if (changed) send.changed = changed;
-		if (substitution) send.substitution = substitution;
+		if (changed !== substitution) {
+			if (changed) send.changed = changed;
+			if (substitution) send.substitution = substitution;
+		}
+
 		if (location) send.location = location;
 
 		const options = {

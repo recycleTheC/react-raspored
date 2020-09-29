@@ -41,8 +41,9 @@ function EditChanges({ show, close, date }) {
 			const selected = changes.find((change) => change._id === changeId);
 			if (selected) {
 				setValue('classId', selected.classId);
-				setValue('changed', selected.changed);
-				setValue('substitution', selected.substitution._id);
+				selected.changed && setValue('changed', selected.changed);
+				selected.substitution &&
+					setValue('substitution', selected.substitution._id);
 				setValue('location', selected.location);
 			}
 		} else {
@@ -171,7 +172,8 @@ function EditChanges({ show, close, date }) {
 								ref={register({ required: 'Obavezno' })}
 							>
 								{classes
-									.filter((x) => x._id !== changed)
+									/*.filter((x) => x._id !== changed)*/
+									/* disabled until bug is resolved */
 									.map((item) => (
 										<option value={item._id} key={item._id}>
 											{item.name}
