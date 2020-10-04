@@ -43,11 +43,6 @@ const ScheduleState = (props) => {
 
 	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
 
-	/*useEffect(() => {
-		prepareSchedule();
-		// eslint-disable-next-line
-	}, [state.rawSchedule, state.changes, state.notes, state.exams]);*/
-
 	useEffect(() => {
 		if (state.reload) prepareSchedule();
 		// eslint-disable-next-line
@@ -88,9 +83,10 @@ const ScheduleState = (props) => {
 							state.changes[k].classId === id
 						) {
 							const regularId = current._id;
+							const regularName = current.name;
 							current = { ...state.changes[k].substitution };
 							current.changed = true;
-							current.regular = regularId;
+							current.regular = { id: regularId, name: regularName };
 						}
 
 						if (state.changes[k].classId === id && state.changes[k].location) {
@@ -456,20 +452,20 @@ const ScheduleState = (props) => {
 		}
 	};
 
-	const createChange = async (date, id, changed, substitution, location) => {
+	const createChange = async (date, values) => {
 		setLoading();
 
 		const send = {
 			date: format(date, 'yyyy-MM-dd'),
-			classId: parseInt(id),
+			classId: parseInt(values.classId),
 		};
 
-		if (changed !== substitution) {
-			if (changed) send.changed = changed;
-			if (substitution) send.substitution = substitution;
+		if (values.changed && values.substitution && values.changeClass) {
+			if (values.changed) send.changed = values.changed;
+			if (values.substitution) send.substitution = values.substitution;
 		}
 
-		if (location) send.location = location;
+		if (values.location) send.location = values.location;
 
 		const options = {
 			headers: {
@@ -510,22 +506,19 @@ const ScheduleState = (props) => {
 		}
 	};
 
-	const updateChange = async (
-		changeId,
-		id,
-		changed,
-		substitution,
-		location
-	) => {
+	const updateChange = async (values) => {
 		setLoading();
 
 		const send = {
-			classId: parseInt(id),
+			classId: parseInt(values.classId),
 		};
 
-		if (changed) send.changed = changed;
-		if (substitution) send.substitution = substitution;
-		if (location) send.location = location;
+		if (values.changed && values.substitution && values.changeClass) {
+			if (values.changed) send.changed = values.changed;
+			if (values.substitution) send.substitution = values.substitution;
+		}
+
+		if (values.location) send.location = values.location;
 
 		const options = {
 			headers: {
@@ -534,7 +527,11 @@ const ScheduleState = (props) => {
 		};
 
 		try {
-			const res = await axios.put(`/api/changes/${changeId}`, send, options);
+			const res = await axios.put(
+				`/api/changes/${values.changeId}`,
+				send,
+				options
+			);
 
 			dispatch({
 				type: UPDATE_CHANGE,

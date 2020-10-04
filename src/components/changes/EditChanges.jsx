@@ -1,8 +1,9 @@
 import React, { useContext, useEffect } from 'react';
+import { PropTypes } from 'prop-types';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { format } from 'date-fns';
-import ScheduleContext from '../../context/schedule/scheduleContext';
 import { useForm } from 'react-hook-form';
+import ScheduleContext from '../../context/schedule/scheduleContext';
 
 function EditChanges({ show, close, date }) {
 	const context = useContext(ScheduleContext);
@@ -16,7 +17,10 @@ function EditChanges({ show, close, date }) {
 	} = context;
 
 	const { handleSubmit, register, errors, setValue, watch, reset } = useForm({
-		defaultValues: { changeId: '0', classId: '1', changed: '0' },
+		defaultValues: {
+			changeId: '0',
+			changeClass: true,
+		},
 	});
 
 	if (classes.length === 0) {
@@ -24,27 +28,29 @@ function EditChanges({ show, close, date }) {
 	}
 
 	const onSubmit = (values) => {
-		const { changeId, classId, changed, substitution, location } = values;
-
 		if (changeId === '0') {
-			createChange(date, classId, changed, substitution, location);
+			createChange(date, values);
 		} else {
-			updateChange(changeId, classId, changed, substitution, location);
+			updateChange(values);
 		}
 		close({ target: { name: 'changes' } });
 	};
 
-	const { changeId, classId, changed } = watch();
+	const { changeId, classId, changeClass, changed } = watch();
 
 	useEffect(() => {
 		if (changeId !== '0') {
 			const selected = changes.find((change) => change._id === changeId);
 			if (selected) {
 				setValue('classId', selected.classId);
-				selected.changed && setValue('changed', selected.changed);
-				selected.substitution &&
+				if (selected.changed) {
+					setValue('changeClass', true);
+					setValue('changed', selected.changed);
 					setValue('substitution', selected.substitution._id);
-				setValue('location', selected.location);
+				} else {
+					setValue('changeClass', false);
+				}
+				if (selected.location) setValue('location', selected.location);
 			}
 		} else {
 			reset();
@@ -60,8 +66,6 @@ function EditChanges({ show, close, date }) {
 	const hide = () => {
 		close({ target: { name: 'changes' } });
 	};
-
-	const toChange = changed === '0' ? false : true;
 
 	return (
 		<Modal show={show} onHide={hide}>
@@ -100,6 +104,7 @@ function EditChanges({ show, close, date }) {
 							as='select'
 							name='classId'
 							ref={register({ required: 'Obavezno' })}
+							disabled={changeId !== '0'}
 						>
 							{schedule.map((x) => {
 								return (
@@ -112,53 +117,52 @@ function EditChanges({ show, close, date }) {
 					</Form.Group>
 
 					<Form.Group>
-						<Form.Label>
-							Predmet (redovno)
-							{errors.changed && <small>({errors.changed.message})</small>}
-						</Form.Label>
-						<Form.Control
-							as='select'
-							name='changed'
-							ref={register({ required: 'Obavezno' })}
-						>
-							{/**
-							 * @todo Bug & Feature: Creating changes with time & location only
-							 */}
-
-							{schedule
-								.filter((item) => item.id.toString() === classId)
-								.map((x) => {
-									return x.classes.map((y) => {
-										if (y.regular) {
-											return (
-												<option value={y.regular} key={y.regular}>
-													{
-														classes.find(
-															(item) => item._id.toString() === y.regular
-														).name
-													}{' '}
-													(postoji izmjena)
-												</option>
-											);
-										} else {
-											return (
-												<option value={y._id} key={y._id}>
-													{classes.find((item) => item._id === y._id).name}
-												</option>
-											);
-										}
-									});
-								})}
-						</Form.Control>
-
-						{/* <Form.Control
-							as='input'
-							ref={register({ required: 'Obavezno' })}
-							name='changed'
-						></Form.Control> */}
+						<Form.Check
+							type='checkbox'
+							name='changeClass'
+							label='Mijena li se redovni sat?'
+							ref={register}
+						/>
 					</Form.Group>
 
-					{toChange && (
+					<div style={{ display: !changeClass && 'none' }}>
+						<Form.Group>
+							<Form.Label>
+								Predmet (redovno)
+								{errors.changed && <small>({errors.changed.message})</small>}
+							</Form.Label>
+							<Form.Control
+								as='select'
+								name='changed'
+								ref={register({ required: 'Obavezno' })}
+								disabled={!changeClass}
+							>
+								{schedule
+									.filter((item) => item.id.toString() === classId)
+									.map((x) => {
+										return x.classes.map((y) => {
+											if (y.regular) {
+												return (
+													<option value={y.regular.id} key={y.regular.id}>
+														{
+															classes.find(
+																(item) => item._id.toString() === y.regular.id
+															).name
+														}
+													</option>
+												);
+											} else {
+												return (
+													<option value={y._id} key={y._id}>
+														{classes.find((item) => item._id === y._id).name}
+													</option>
+												);
+											}
+										});
+									})}
+							</Form.Control>
+						</Form.Group>
+
 						<Form.Group>
 							<Form.Label>
 								Predmet (zamjena)
@@ -170,10 +174,10 @@ function EditChanges({ show, close, date }) {
 								as='select'
 								name='substitution'
 								ref={register({ required: 'Obavezno' })}
+								disabled={!changeClass}
 							>
 								{classes
-									/*.filter((x) => x._id !== changed)*/
-									/* disabled until bug is resolved */
+									.filter((x) => x._id !== changed)
 									.map((item) => (
 										<option value={item._id} key={item._id}>
 											{item.name}
@@ -181,7 +185,7 @@ function EditChanges({ show, close, date }) {
 									))}
 							</Form.Control>
 						</Form.Group>
-					)}
+					</div>
 
 					<Form.Group>
 						<Form.Label>
@@ -210,5 +214,11 @@ function EditChanges({ show, close, date }) {
 		</Modal>
 	);
 }
+
+EditChanges.propTypes = {
+	show: PropTypes.bool,
+	close: PropTypes.func,
+	date: PropTypes.object,
+};
 
 export default EditChanges;
