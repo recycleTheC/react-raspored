@@ -48,7 +48,7 @@ function DailySchedule({ date }) {
 						<p key={item._id}>
 							{item.classId}. sat -{' '}
 							{item.substitution && item.substitution.name}{' '}
-							{item.location !== '-' && `(${item.location})`}
+							{item.location && item.location !== '-' && `(${item.location})`}
 						</p>
 					);
 				})}
