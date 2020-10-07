@@ -194,7 +194,7 @@ function EditChanges({ show, close, date }) {
 						</Form.Label>
 						<Form.Control
 							as='input'
-							ref={register({ required: 'Obavezno' })}
+							ref={register}
 							name='location'
 						></Form.Control>
 					</Form.Group>
