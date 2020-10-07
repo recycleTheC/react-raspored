@@ -90,8 +90,10 @@ const ScheduleState = (props) => {
 						}
 
 						if (state.changes[k].classId === id && state.changes[k].location) {
-							location = state.changes[k].location;
-							locationChanged = true;
+							if (state.changes[k].location !== location) {
+								location = state.changes[k].location;
+								locationChanged = true;
+							}
 						}
 					}
 
@@ -440,9 +442,19 @@ const ScheduleState = (props) => {
 		try {
 			const res = await axios.get(`/api/changes/${format(date, 'yyyy-MM-dd')}`);
 
+			const compare = (a, b) => {
+				if (a.classId < b.classId) {
+					return -1;
+				}
+				if (a.classId > b.classId) {
+					return 1;
+				}
+				return 0;
+			};
+
 			dispatch({
 				type: GET_CHANGES,
-				payload: res.data,
+				payload: res.data.sort(compare),
 			});
 		} catch (err) {
 			dispatch({
