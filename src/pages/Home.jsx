@@ -48,20 +48,6 @@ export default function Home() {
 				</Column>
 				<Column>
 					<DatePick date={date} setDate={setDate} />
-					<br />
-					{!isToday(date) && (
-						<Button
-							onClick={() => {
-								setDate(new Date());
-							}}
-							variant='outline-warning'
-							size='sm'
-							className='py-0 mb-2'
-							style={{ fontSize: '0.8em' }}
-						>
-							danas
-						</Button>
-					)}
 				</Column>
 				<Column>
 					<Button
@@ -74,12 +60,32 @@ export default function Home() {
 						<ArrowRightCircle />
 					</Button>
 				</Column>
+			</Row>
+			<>
+				{!isToday(date) && (
+					<Button
+						onClick={() => {
+							setDate(new Date());
+						}}
+						variant='outline-warning'
+						size='sm'
+						className='py-0 mb-2'
+						style={{
+							fontSize: '0.8em',
+							display: 'block',
+							marginLeft: 'auto',
+							marginRight: 'auto',
+						}}
+					>
+						vrati na današnji dan
+					</Button>
+				)}
 				{schedule.msg && (
-					<Column md='12' sm='12'>
+					<Column md='12' sm='12' style={{ textAlign: 'center' }}>
 						<small>{schedule.msg}</small>
 					</Column>
 				)}
-			</Row>
+			</>
 			{loading ? spinner : !schedule.msg && <DailySchedule date={date} />}
 		</div>
 	);
