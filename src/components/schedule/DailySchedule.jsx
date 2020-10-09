@@ -11,7 +11,6 @@ import {
 	ButtonGroup,
 	Button,
 	ListGroupItem,
-	Alert,
 	Popover,
 	OverlayTrigger,
 } from 'react-bootstrap';
@@ -39,22 +38,6 @@ function DailySchedule({ date }) {
 			[e.target.name]: !showModal[e.target.name],
 		});
 	};
-
-	const renderTooltip = (props) => (
-		<Popover id='popover-basic' {...props}>
-			<Popover.Content>
-				{changes.map((item) => {
-					return (
-						<p key={item._id}>
-							{item.classId}. sat -{' '}
-							{item.substitution && item.substitution.name}{' '}
-							{item.location && item.location !== '-' && `(${item.location})`}
-						</p>
-					);
-				})}
-			</Popover.Content>
-		</Popover>
-	);
 
 	const edit = (
 		<ListGroupItem key='toolbar' style={{ border: 0 }}>
@@ -90,34 +73,67 @@ function DailySchedule({ date }) {
 	);
 
 	const examList = (
-		<Alert variant='dark' className='my-2'>
-			<Row>
-				<div className='col-auto align-self-start'>
-					<ExclamationTriangle color='red' size='30px' />
-				</div>
-				<Col style={{ margin: 'auto' }}>
-					<strong>Pisane provjere: </strong>
+		<ListGroup.Item key='changes' className='text-center' style={{ border: 0 }}>
+			<Badge pill variant='dark'>
+				<span
+					style={{
+						fontSize: '1rem',
+					}}
+				>
+					<ExclamationTriangle
+						color='yellow'
+						size='1rem'
+						style={{ marginBottom: '0.125em' }}
+					/>{' '}
+					Pisane provjere:{' '}
 					{exams.length > 0 &&
 						exams
-							.map((exam) => {
+							.map((exam, index) => {
 								return (
-									<Badge pill variant='danger' key={exam._id}>
-										{exam.classKey.name}
-									</Badge>
+									<OverlayTrigger
+										placement='bottom'
+										delay={{ show: 250, hide: 400 }}
+										key={exam._id}
+										overlay={
+											<Popover id={`popover-basic-${index}`}>
+												<Popover.Content>
+													<div>{exam.content}</div>
+												</Popover.Content>
+											</Popover>
+										}
+									>
+										<Badge variant='danger'>{exam.classKey.name}</Badge>
+									</OverlayTrigger>
 								);
 							})
 							.reduce((prev, curr) => [prev, ' ', curr])}
-				</Col>
-			</Row>
-		</Alert>
+				</span>
+			</Badge>
+		</ListGroup.Item>
 	);
 
 	const changesAlert = (
-		<ListGroup.Item key='changes' className='text-center'>
+		<ListGroup.Item key='changes' className='text-center' style={{ border: 0 }}>
 			<OverlayTrigger
 				placement='bottom'
 				delay={{ show: 250, hide: 400 }}
-				overlay={renderTooltip}
+				overlay={
+					<Popover id='popover-basic'>
+						<Popover.Content>
+							{changes.map((item) => {
+								return (
+									<div key={item._id}>
+										{item.classId}. sat -{' '}
+										{item.substitution && item.substitution.name}{' '}
+										{item.location &&
+											item.location !== '-' &&
+											`(${item.location})`}
+									</div>
+								);
+							})}
+						</Popover.Content>
+					</Popover>
+				}
 			>
 				<Badge pill variant='danger'>
 					<span
