@@ -1,7 +1,7 @@
 .timeline-container {
 	display: flex;
 	flex-direction: column;
-	margin: 40px;
+	margin: 30px;
 	position: relative;
 }
 
@@ -103,9 +103,29 @@
 		max-width: 100%;
 	}
 	.timeline-container {
-		margin: 0;
+		margin: 1em 0 0 0;
 	}
 	.timeline-item-date {
 		font-size: calc(90%);
 	}
+}
+
+.parni-tjedan::before {
+	content: '\A';
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 2px;
+	background-color: red;
+}
+
+.neparni-tjedan::before {
+	content: '\A';
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 2px;
+	background-color: green;
 }

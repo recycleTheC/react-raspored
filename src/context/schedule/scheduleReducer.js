@@ -120,7 +120,6 @@ export default (state, action) => {
 				loading: false,
 			};
 		case SET_SELECTED_CLASS:
-			console.log('ati', action.payload);
 			return {
 				...state,
 				selectedClass: action.payload,

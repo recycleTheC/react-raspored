@@ -1,16 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import { format } from 'date-fns';
+import { format, getWeek } from 'date-fns';
 import locale from 'date-fns/locale/hr';
 
 export const TimelineItem = ({ data }) => {
+	const date = Date.parse(data.date);
+	const week = getWeek(date) % 2 === 0 ? 'parni-tjedan' : 'neparni-tjedan';
+
 	return (
 		<div className='timeline-item'>
 			<div className='timeline-item-content'>
 				<div className='timeline-item-date'>
-					<small>
-						{format(Date.parse(data.date), 'eeee, dd. MMMM yyyy.', { locale })}{' '}
+					<small className={week}>
+						{format(date, 'eeee, dd. MMMM yyyy.', {
+							locale,
+						})}{' '}
 						({data.classId}. sat)
 					</small>
 				</div>

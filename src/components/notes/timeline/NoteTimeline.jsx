@@ -18,8 +18,6 @@ export const NoteTimeline = () => {
 		setSelectedClass,
 	} = context;
 
-	console.log(selectedClass);
-
 	const { register, errors, watch } = useForm({
 		defaultValues: { classId: selectedClass },
 	});
@@ -53,7 +51,7 @@ export const NoteTimeline = () => {
 
 	return (
 		<div>
-			<Form inline>
+			<Form inline className='mb-0'>
 				<Form.Group>
 					<Form.Label className='mr-1'>
 						Predmet {errors.class && <small>({errors.class.message})</small>}
@@ -74,6 +72,13 @@ export const NoteTimeline = () => {
 					</Form.Control>
 				</Form.Group>
 			</Form>
+
+			<div style={{ textAlign: 'center' }} className='my-1'>
+				<small>
+					<span className='neparni-tjedan'>ujutro</span> /{' '}
+					<span className='parni-tjedan'>popodne</span>
+				</small>
+			</div>
 
 			{loading ? (
 				spinner
