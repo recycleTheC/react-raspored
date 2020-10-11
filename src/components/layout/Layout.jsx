@@ -43,18 +43,14 @@ export default function Layout({ children }) {
 	);
 
 	const scheduleItems = (
-		<Navbar.Collapse id='basic-navbar-nav'>
-			<Nav className='mr-auto'>
-				<NavDropdown title='Raspored' id='basic-nav-dropdown'>
-					<NavDropdown.Item as={Link} to='/teacher/add'>
-						Dodaj predavača
-					</NavDropdown.Item>
-					<NavDropdown.Item as={Link} to='/class/add'>
-						Dodaj predmet
-					</NavDropdown.Item>
-				</NavDropdown>
-			</Nav>
-		</Navbar.Collapse>
+		<NavDropdown title='Raspored' id='basic-nav-dropdown'>
+			<NavDropdown.Item as={Link} to='/teacher/add'>
+				Dodaj predavača
+			</NavDropdown.Item>
+			<NavDropdown.Item as={Link} to='/class/add'>
+				Dodaj predmet
+			</NavDropdown.Item>
+		</NavDropdown>
 	);
 
 	return (
@@ -67,7 +63,14 @@ export default function Layout({ children }) {
 							<strong>Školski planer</strong>
 						</Navbar.Brand>
 						<Navbar.Toggle aria-controls='basic-navbar-nav' />
-						{isAuthenticated && scheduleItems}
+						<Navbar.Collapse id='basic-navbar-nav'>
+							<Nav className='mr-auto'>
+								<Nav.Link as={Link} to='/notes'>
+									Bilješke
+								</Nav.Link>
+								{isAuthenticated && scheduleItems}
+							</Nav>
+						</Navbar.Collapse>
 						{isAuthenticated ? authLinks : guestLinks}
 					</Container>
 				</Navbar>
