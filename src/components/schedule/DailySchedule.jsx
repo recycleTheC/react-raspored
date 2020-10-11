@@ -73,7 +73,7 @@ function DailySchedule({ date }) {
 	);
 
 	const examList = (
-		<ListGroup.Item key='changes' className='text-center' style={{ border: 0 }}>
+		<ListGroup.Item key='exams' className='text-center' style={{ border: 0 }}>
 			<Badge pill variant='dark'>
 				<span
 					style={{
