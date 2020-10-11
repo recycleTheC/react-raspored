@@ -74,7 +74,7 @@ function DailySchedule({ date }) {
 
 	const examList = (
 		<ListGroup.Item key='exams' className='text-center' style={{ border: 0 }}>
-			<Badge pill variant='dark'>
+			<Badge pill variant='dark' style={{ whiteSpace: 'break-spaces' }}>
 				<span
 					style={{
 						fontSize: '1rem',
@@ -83,7 +83,10 @@ function DailySchedule({ date }) {
 					<ExclamationTriangle
 						color='yellow'
 						size='1rem'
-						style={{ marginBottom: '0.125em' }}
+						className='blink'
+						style={{
+							marginBottom: '0.125em',
+						}}
 					/>{' '}
 					Pisane provjere:{' '}
 					{exams.length > 0 &&
