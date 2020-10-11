@@ -583,9 +583,19 @@ const ScheduleState = (props) => {
 		try {
 			const res = await axios.get(`/api/notes/class/${classId}`);
 
+			const compare = (a, b) => {
+				if (a.date < b.date) {
+					return -1;
+				}
+				if (a.date > b.date) {
+					return 1;
+				}
+				return 0;
+			};
+
 			dispatch({
 				type: GET_ALL_NOTES,
-				payload: res.data,
+				payload: res.data.sort(compare),
 			});
 		} catch (err) {
 			dispatch({
