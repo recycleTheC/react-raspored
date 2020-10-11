@@ -1,0 +1,111 @@
+.timeline-container {
+	display: flex;
+	flex-direction: column;
+	margin: 40px;
+	position: relative;
+}
+
+.timeline-container::after {
+	background-color: #ef862b;
+	content: '';
+	position: absolute;
+	left: calc(50% - 2px);
+	width: 4px;
+	height: 100%;
+}
+
+.timeline-item {
+	display: flex;
+	justify-content: flex-end;
+	padding-right: 30px;
+	margin: 10px 0;
+	width: 50%;
+}
+
+.timeline-item:nth-child(even) {
+	align-self: flex-end;
+	justify-content: flex-start;
+	padding-left: 30px;
+	padding-right: 0;
+}
+
+.timeline-item-content {
+	max-width: 70%;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	padding: 15px;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 0 5px rgba(29, 29, 29, 0.3);
+	width: 400px;
+	text-align: right;
+	position: relative;
+}
+
+.timeline-item:nth-child(even) .timeline-item-content {
+	align-items: flex-start;
+	text-align: left;
+}
+
+.timeline-item-content::after {
+	/* arrow */
+	content: '';
+	background-color: #fff;
+	box-shadow: 1px -1px 2px rgba(29, 29, 29, 0.2);
+	position: absolute;
+	transform: rotate(45deg);
+	right: -7.5px;
+	top: calc(50%-7.5px);
+	width: 15px;
+	height: 15px;
+	z-index: -100;
+}
+
+.timeline-item:nth-child(even) .timeline-item-content::after {
+	right: auto;
+	left: -7.5px;
+	box-shadow: -1px 1px 2px rgba(29, 29, 29, 0.2);
+}
+
+.timeline-item-text p {
+	margin-top: 0.25em !important;
+	margin-bottom: 0.25em !important;
+}
+
+.form-group {
+	margin: auto;
+}
+
+.timeline-item-content .circle {
+	background-color: #fff;
+	border: 3px solid #ef862b;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	position: absolute;
+	top: calc(50%-10px);
+	right: -40px;
+	z-index: 100;
+}
+
+.timeline-item:nth-child(even) .timeline-item-content .circle {
+	right: auto;
+	left: -40px;
+}
+
+@media only screen and (max-width: 767px) {
+	.timeline-item-content,
+	.timeline-item:nth-child(even) .timeline-item-content {
+		padding: 15px 10px;
+		text-align: center;
+		align-items: center;
+		max-width: 100%;
+	}
+	.timeline-container {
+		margin: 0;
+	}
+	.timeline-item-date {
+		font-size: calc(90%);
+	}
+}

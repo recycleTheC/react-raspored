@@ -19,6 +19,8 @@ import {
 	UPDATE_CHANGE,
 	DELETE_CHANGE,
 	GET_CLASSES,
+	GET_ALL_NOTES,
+	SET_SELECTED_CLASS,
 } from '../types';
 
 export default (state, action) => {
@@ -110,6 +112,18 @@ export default (state, action) => {
 				changes: action.payload,
 				loading: false,
 				reload: true,
+			};
+		case GET_ALL_NOTES:
+			return {
+				...state,
+				classNotes: action.payload,
+				loading: false,
+			};
+		case SET_SELECTED_CLASS:
+			console.log('ati', action.payload);
+			return {
+				...state,
+				selectedClass: action.payload,
 			};
 
 		default:

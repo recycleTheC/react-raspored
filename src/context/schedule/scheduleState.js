@@ -25,6 +25,8 @@ import {
 	UPDATE_CHANGE,
 	DELETE_CHANGE,
 	GET_CLASSES,
+	GET_ALL_NOTES,
+	SET_SELECTED_CLASS,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -39,6 +41,8 @@ const ScheduleState = (props) => {
 		rawSchedule: [],
 		classes: [],
 		reload: false,
+		classNotes: [],
+		selectedClass: '',
 	};
 
 	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
@@ -573,6 +577,31 @@ const ScheduleState = (props) => {
 		}
 	};
 
+	const getAllNotes = async (classId) => {
+		setLoading();
+
+		try {
+			const res = await axios.get(`/api/notes/class/${classId}`);
+
+			dispatch({
+				type: GET_ALL_NOTES,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_ALL_NOTES,
+				payload: [],
+			});
+		}
+	};
+
+	const setSelectedClass = (selected) => {
+		dispatch({
+			type: SET_SELECTED_CLASS,
+			payload: selected,
+		});
+	};
+
 	return (
 		<ScheduleContext.Provider
 			value={{
@@ -584,6 +613,8 @@ const ScheduleState = (props) => {
 				exams: state.exams,
 				changes: state.changes,
 				classes: state.classes,
+				classNotes: state.classNotes,
+				selectedClass: state.selectedClass,
 
 				getSchedule,
 				setLoading,
@@ -602,6 +633,8 @@ const ScheduleState = (props) => {
 				deleteChange,
 				getClasses,
 				clearSchedule,
+				getAllNotes,
+				setSelectedClass,
 			}}
 		>
 			{props.children}
