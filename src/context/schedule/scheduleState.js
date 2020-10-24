@@ -172,7 +172,7 @@ const ScheduleState = (props) => {
 		} catch (err) {
 			dispatch({
 				type: GET_DAILY_SCHEDULE,
-				payload: { msg: 'Raspored nije pronađen' },
+				payload: { msg: err.response.data.status },
 			});
 		}
 	};

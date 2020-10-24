@@ -9,7 +9,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import { ArrowRightCircle, ArrowLeftCircle } from 'react-bootstrap-icons';
 
 import DailySchedule from '../components/schedule/DailySchedule';
-import DatePick from '../components/date-picker/DatePicker';
+import DatePick from '../components/date-picker/DatePick';
 
 export default function Home() {
 	const context = useContext(ScheduleContext);

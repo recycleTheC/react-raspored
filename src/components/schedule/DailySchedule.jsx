@@ -210,7 +210,11 @@ function DailySchedule({ date }) {
 									.map((item) => {
 										return (
 											<Row key={item._id}>
-												<Col md='6' key={item._id} className='mb-2'>
+												<Col
+													md={item.notes.length > 0 ? '6' : 12}
+													key={item._id}
+													className='mb-2'
+												>
 													<div>
 														<h4>
 															{item.name}{' '}
