@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 import ScheduleContext from '../../context/schedule/scheduleContext';
 import { useForm } from 'react-hook-form';
 
@@ -122,5 +123,11 @@ function EditNote({ show, close, date }) {
 		</Modal>
 	);
 }
+
+EditNote.propTypes = {
+	show: PropTypes.func,
+	close: PropTypes.func,
+	date: PropTypes.node,
+};
 
 export default EditNote;

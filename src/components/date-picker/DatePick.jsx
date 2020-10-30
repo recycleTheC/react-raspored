@@ -2,8 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import locale from 'date-fns/locale/hr';
 import DatePicker from 'react-datepicker';
-// import { Calendar3 } from 'react-bootstrap-icons';
-
+import PropTypes from 'prop-types';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const DatePick = ({ date, setDate }) => {
@@ -32,6 +31,11 @@ const DatePick = ({ date, setDate }) => {
 			popperPlacement='auto'
 		/>
 	);
+};
+
+DatePick.propTypes = {
+	date: PropTypes.node,
+	setDate: PropTypes.func,
 };
 
 export default DatePick;

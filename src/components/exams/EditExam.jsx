@@ -3,6 +3,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { format } from 'date-fns';
 import ScheduleContext from '../../context/schedule/scheduleContext';
 import { useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 
 function EditExam({ show, close, date }) {
 	const context = useContext(ScheduleContext);
@@ -120,5 +121,11 @@ function EditExam({ show, close, date }) {
 		</Modal>
 	);
 }
+
+EditExam.propTypes = {
+	show: PropTypes.func,
+	close: PropTypes.func,
+	date: PropTypes.node,
+};
 
 export default EditExam;

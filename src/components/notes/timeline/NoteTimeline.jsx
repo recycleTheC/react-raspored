@@ -85,7 +85,14 @@ export const NoteTimeline = () => {
 			) : classNotes.length > 0 ? (
 				<div className='timeline-container'>
 					{classNotes.map((item) => {
-						return <TimelineItem key={item._id} data={item} />;
+						return (
+							<TimelineItem
+								key={item._id}
+								date={item.date}
+								text={item.note}
+								classId={item.classId}
+							/>
+						);
 					})}
 				</div>
 			) : (
