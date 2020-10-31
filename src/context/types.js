@@ -19,6 +19,7 @@ export const UPDATE_CHANGE = 'UPDATE_CHANGE';
 export const DELETE_CHANGE = 'DELETE_CHANGE';
 export const GET_CLASSES = 'GET_CLASSES';
 export const GET_ALL_NOTES = 'GET_ALL_NOTES';
+export const GET_ALL_EXAMS = 'GET_ALL_EXAMS';
 export const SET_SELECTED_CLASS = 'SET_SELECTED_CLASS';
 
 export const USER_LOADED = 'USER_LOADED';

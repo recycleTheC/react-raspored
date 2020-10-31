@@ -21,6 +21,7 @@ import {
 	GET_CLASSES,
 	GET_ALL_NOTES,
 	SET_SELECTED_CLASS,
+	GET_ALL_EXAMS,
 } from '../types';
 
 export default (state, action) => {
@@ -125,6 +126,12 @@ export default (state, action) => {
 				selectedClass: action.payload,
 			};
 
+		case GET_ALL_EXAMS:
+			return {
+				...state,
+				classExams: action.payload,
+				loading: false,
+			};
 		default:
 			return state;
 	}

@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import { format, getWeek } from 'date-fns';
+import { format, getWeek, parseISO } from 'date-fns';
 import locale from 'date-fns/locale/hr';
 
-export const TimelineItem = ({ date, classId, text }) => {
-	const currentDate = Date.parse(date);
-	const week = getWeek(date) % 2 === 0 ? 'parni-tjedan' : 'neparni-tjedan';
+export const TimelineItem = ({ date, classId, text, type }) => {
+	const day = parseISO(date);
+	const week = getWeek(day) % 2 === 0 ? 'parni-tjedan' : 'neparni-tjedan';
 
 	return (
 		<div className='timeline-item'>
-			<div className='timeline-item-content'>
+			<div className={`timeline-item-content ${type}`}>
 				<div className='timeline-item-date'>
 					<small className={week}>
-						{format(currentDate, 'eeee, dd. MMMM yyyy.', {
+						{format(day, 'eeee, dd. MMMM yyyy.', {
 							locale,
 						})}{' '}
 						({classId}. sat)
@@ -29,9 +29,10 @@ export const TimelineItem = ({ date, classId, text }) => {
 };
 
 TimelineItem.propTypes = {
-	date: PropTypes.object,
+	date: PropTypes.string,
 	classId: PropTypes.number,
 	text: PropTypes.string,
+	type: PropTypes.string,
 };
 
 export default TimelineItem;

@@ -27,6 +27,7 @@ import {
 	GET_CLASSES,
 	GET_ALL_NOTES,
 	SET_SELECTED_CLASS,
+	GET_ALL_EXAMS,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -42,6 +43,7 @@ const ScheduleState = (props) => {
 		classes: [],
 		reload: false,
 		classNotes: [],
+		classExams: [],
 		selectedClass: '',
 	};
 
@@ -583,23 +585,31 @@ const ScheduleState = (props) => {
 		try {
 			const res = await axios.get(`/api/notes/class/${classId}`);
 
-			const compare = (a, b) => {
-				if (a.date < b.date) {
-					return -1;
-				}
-				if (a.date > b.date) {
-					return 1;
-				}
-				return 0;
-			};
-
 			dispatch({
 				type: GET_ALL_NOTES,
-				payload: res.data.sort(compare),
+				payload: res.data,
 			});
 		} catch (err) {
 			dispatch({
 				type: GET_ALL_NOTES,
+				payload: [],
+			});
+		}
+	};
+
+	const getAllExams = async (classId) => {
+		setLoading();
+
+		try {
+			const res = await axios.get(`/api/exam/class/${classId}`);
+
+			dispatch({
+				type: GET_ALL_EXAMS,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_ALL_EXAMS,
 				payload: [],
 			});
 		}
@@ -624,6 +634,7 @@ const ScheduleState = (props) => {
 				changes: state.changes,
 				classes: state.classes,
 				classNotes: state.classNotes,
+				classExams: state.classExams,
 				selectedClass: state.selectedClass,
 
 				getSchedule,
@@ -644,6 +655,7 @@ const ScheduleState = (props) => {
 				getClasses,
 				clearSchedule,
 				getAllNotes,
+				getAllExams,
 				setSelectedClass,
 			}}
 		>

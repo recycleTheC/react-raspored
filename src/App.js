@@ -12,7 +12,7 @@ import AddTeacher from './components/teachers/AddTeacher';
 import AddClass from './components/classes/AddClass';
 import Login from './components/auth/Login';
 import Alerts from './components/layout/Alerts';
-import NoteTimeline from './components/notes/timeline/NoteTimeline';
+import Timeline from './components/timeline/Timeline';
 
 import setAuthToken from './utils/setAuthToken';
 
@@ -36,7 +36,7 @@ function App() {
 								/>
 								<PrivateRoute exact path='/class/add' component={AddClass} />
 								<Route exact path='/login' component={Login} />
-								<Route exact path='/notes' component={NoteTimeline} />
+								<Route exact path='/notes' component={Timeline} />
 							</Switch>
 						</Layout>
 					</AlertState>
