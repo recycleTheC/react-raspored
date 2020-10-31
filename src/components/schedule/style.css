@@ -1,0 +1,19 @@
+.between {
+	height: 100%;
+	border-left: 1px rgba(0, 0, 0, 0.15) solid;
+	padding-left: 0.5em;
+}
+@media only screen and (max-width: 390px) {
+	.between {
+		border-left: 0;
+		padding-left: 0;
+		padding-top: 1em;
+	}
+	.between::before {
+		content: '';
+		border-top: 1px black solid;
+		width: 95%;
+		margin: auto;
+		padding-bottom: 1em;
+	}
+}
