@@ -17,7 +17,6 @@ export default function Layout({ children }) {
 		if (!isAuthenticated && token) {
 			loadUser();
 		}
-		// eslint-disable-next-line
 	}, []);
 
 	const hello = user ? 'Pozdrav, ' + user.name : '';
@@ -66,7 +65,7 @@ export default function Layout({ children }) {
 						<Navbar.Collapse id='basic-navbar-nav'>
 							<Nav className='mr-auto'>
 								<Nav.Link as={Link} to='/notes'>
-									Bilješke
+									Bilješke i ispiti
 								</Nav.Link>
 								{isAuthenticated && scheduleItems}
 							</Nav>
