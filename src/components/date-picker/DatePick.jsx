@@ -34,7 +34,7 @@ const DatePick = ({ date, setDate }) => {
 };
 
 DatePick.propTypes = {
-	date: PropTypes.node,
+	date: PropTypes.objectOf(Date),
 	setDate: PropTypes.func,
 };
 

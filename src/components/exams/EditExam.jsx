@@ -123,9 +123,9 @@ function EditExam({ show, close, date }) {
 }
 
 EditExam.propTypes = {
-	show: PropTypes.func,
+	show: PropTypes.bool,
 	close: PropTypes.func,
-	date: PropTypes.node,
+	date: PropTypes.objectOf(Date),
 };
 
 export default EditExam;
