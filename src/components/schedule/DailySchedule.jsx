@@ -213,12 +213,13 @@ function DailySchedule({ date }) {
 										classes.map((item, index) => {
 											const factor = 12 / 2;
 											const border = index > 0 ? 'between' : '';
+											const size = item.notes.length === 0 ? 12 : factor;
 											return (
 												<Col key={item._id} className='px-0 col-12 col-sm'>
 													<Row className={`mx-0 ${border}`}>
 														<Col
-															lg={item.notes.length === 0 ? 12 : factor}
-															xl={item.notes.length === 0 ? 12 : factor}
+															lg={size}
+															xl={size}
 															key={item._id}
 															className='mb-2'
 														>
