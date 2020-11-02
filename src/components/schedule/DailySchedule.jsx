@@ -177,7 +177,7 @@ function DailySchedule({ date }) {
 				return (
 					<ListGroup.Item key={row.scheduleId}>
 						<Row>
-							<Col>
+							<Col className='main'>
 								<div className='mb-2'>
 									<Badge pill variant='primary'>
 										{id}. sat
@@ -214,7 +214,7 @@ function DailySchedule({ date }) {
 											const factor = 12 / 2;
 											const border = index > 0 ? 'between' : '';
 											return (
-												<Col key={item._id} className='px-0'>
+												<Col key={item._id} className='px-0 col-12 col-sm'>
 													<Row className={`mx-0 ${border}`}>
 														<Col
 															lg={item.notes.length === 0 ? 12 : factor}
