@@ -209,98 +209,95 @@ function DailySchedule({ date }) {
 									)}
 								</div>
 								<Row>
-									{
-										classes.map((item, index) => {
-											const factor = 12 / 2;
-											const border = index > 0 ? 'between' : '';
-											const size = item.notes.length === 0 ? 12 : factor;
-											return (
-												<Col key={item._id} className='px-0 col-12 col-sm'>
-													<Row className={`mx-0 ${border}`}>
-														<Col
-															lg={size}
-															xl={size}
-															key={item._id}
-															className='mb-2'
-														>
-															<h4>
-																{item.name}{' '}
-																{item.changed && (
-																	<ExclamationTriangle
-																		color='red'
-																		size='0.8rem'
-																		style={{ marginBottom: '0.125em' }}
-																	/>
-																)}
-															</h4>
-															<small>
-																{item.teacher &&
-																	item.teacher
-																		.map((t) => t.name)
+									{classes.map((item, index) => {
+										const factor = 12 / row.classes.length;
+										const border = index > 0 ? 'between' : '';
+										const size = item.notes.length === 0 ? 12 : factor;
+
+										return (
+											<Col
+												key={item._id}
+												className={`px-0 col-${factor} col-sm`}
+											>
+												<Row className={`mx-0 ${border}`}>
+													<Col
+														lg={size}
+														xl={size}
+														key={item._id}
+														className='mb-2'
+													>
+														<h4>
+															{item.name}{' '}
+															{item.changed && (
+																<ExclamationTriangle
+																	color='red'
+																	size='0.8rem'
+																	style={{ marginBottom: '0.125em' }}
+																/>
+															)}
+														</h4>
+														<small>
+															{item.teacher &&
+																item.teacher
+																	.map((t) => t.name)
+																	.reduce((prev, curr) => [prev, ' / ', curr])}
+														</small>{' '}
+														{item.type && (
+															<Badge pill variant='info'>
+																{item.type} smjer
+															</Badge>
+														)}
+														{item.exams.length > 0 && (
+															<div className='mt-2'>
+																<Badge pill variant='danger'>
+																	Pisana provjera
+																</Badge>{' '}
+																<small>
+																	{item.exams
+																		.map((exam) => (
+																			<strong key={uuid()}>{exam}</strong>
+																		))
 																		.reduce((prev, curr) => [
 																			prev,
 																			' / ',
 																			curr,
 																		])}
-															</small>{' '}
-															{item.type && (
-																<Badge pill variant='info'>
-																	{item.type} smjer
-																</Badge>
-															)}
-															{item.exams.length > 0 && (
-																<div className='mt-2'>
-																	<Badge pill variant='danger'>
-																		Pisana provjera
-																	</Badge>{' '}
-																	<small>
-																		{item.exams
-																			.map((exam) => (
-																				<strong key={uuid()}>{exam}</strong>
-																			))
-																			.reduce((prev, curr) => [
-																				prev,
-																				' / ',
-																				curr,
-																			])}
-																	</small>
-																</div>
-															)}
-														</Col>
-
-														{item.notes.length > 0 && (
-															<Col lg={factor} xl={factor}>
-																<Badge pill variant='light'>
-																	Bilješke
-																</Badge>
-																<ul className='pl-4'>
-																	{item.notes.map((note) => (
-																		<li key={uuid()}>
-																			<small>
-																				<ReactMarkdown
-																					source={note}
-																					renderers={{
-																						paragraph: (props) => {
-																							return (
-																								<p className='mb-1' style={{}}>
-																									{props.children}
-																								</p>
-																							);
-																						},
-																					}}
-																				/>
-																			</small>
-																		</li>
-																	))}
-																</ul>
-															</Col>
+																</small>
+															</div>
 														)}
-													</Row>
-												</Col>
-											);
-										})
-										/*.reduce((prev, curr) => [prev, <hr key={uuid()} />, curr])*/
-									}
+													</Col>
+
+													{item.notes.length > 0 && (
+														<Col lg={factor} xl={factor}>
+															<Badge pill variant='light'>
+																Bilješke
+															</Badge>
+															<ul className='pl-4'>
+																{item.notes.map((note) => (
+																	<li key={uuid()}>
+																		<small>
+																			<ReactMarkdown
+																				source={note}
+																				renderers={{
+																					paragraph: (props) => {
+																						return (
+																							<p className='mb-1' style={{}}>
+																								{props.children}
+																							</p>
+																						);
+																					},
+																				}}
+																			/>
+																		</small>
+																	</li>
+																))}
+															</ul>
+														</Col>
+													)}
+												</Row>
+											</Col>
+										);
+									})}
 								</Row>
 							</Col>
 						</Row>
