@@ -221,6 +221,7 @@ function DailySchedule({ date }) {
 											>
 												<Row className={`mx-0 ${border}`}>
 													<Col
+														md={size}
 														lg={size}
 														xl={size}
 														key={item._id}
@@ -268,7 +269,7 @@ function DailySchedule({ date }) {
 													</Col>
 
 													{item.notes.length > 0 && (
-														<Col lg={size} xl={size}>
+														<Col md={size} lg={size} xl={size}>
 															<Badge pill variant='light'>
 																Bilješke
 															</Badge>
