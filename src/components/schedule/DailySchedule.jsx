@@ -212,7 +212,7 @@ function DailySchedule({ date }) {
 									{classes.map((item, index) => {
 										const factor = 12 / row.classes.length;
 										const border = index > 0 ? 'between' : '';
-										const size = item.notes.length === 0 ? 12 : factor;
+										const size = item.notes.length === 0 ? 12 : 6;
 
 										return (
 											<Col
@@ -268,7 +268,7 @@ function DailySchedule({ date }) {
 													</Col>
 
 													{item.notes.length > 0 && (
-														<Col lg={factor} xl={factor}>
+														<Col lg={size} xl={size}>
 															<Badge pill variant='light'>
 																Bilješke
 															</Badge>
