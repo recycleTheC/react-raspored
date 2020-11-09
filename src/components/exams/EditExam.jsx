@@ -30,7 +30,7 @@ function EditExam({ show, close, date }) {
 	const { examId } = watch();
 
 	useEffect(() => {
-		if (examId !== '0') {
+		if (examId !== '0' && examId !== undefined) {
 			const selected = exams.find((exam) => exam._id === examId);
 			setValue('content', selected.content);
 			setValue('class', selected.classKey._id + ':' + selected.classId);

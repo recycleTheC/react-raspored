@@ -30,7 +30,7 @@ function EditNote({ show, close, date }) {
 	const { noteId } = watch();
 
 	useEffect(() => {
-		if (noteId !== '0') {
+		if (noteId !== '0' && noteId !== undefined) {
 			const selected = notes.find((note) => note._id === noteId);
 
 			setValue('note', selected.note);

@@ -39,7 +39,7 @@ function EditChanges({ show, close, date }) {
 	const { changeId, classId, changeClass, changed } = watch();
 
 	useEffect(() => {
-		if (changeId !== '0') {
+		if (changeId !== '0' && changeId !== undefined) {
 			const selected = changes.find((change) => change._id === changeId);
 			if (selected) {
 				setValue('classId', selected.classId);
