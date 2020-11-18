@@ -129,7 +129,12 @@ function DailySchedule({ date }) {
 								return (
 									<div key={item._id}>
 										{item.classId}. sat -{' '}
-										{item.substitution && item.substitution.name}{' '}
+										{item.substitution &&
+											(item.substitution.name !== '/' ? (
+												item.substitution.name
+											) : (
+												<span className='changed'>{`${item.changed.name}`}</span>
+											))}{' '}
 										{item.location &&
 											item.location !== '-' &&
 											`(${item.location})`}
