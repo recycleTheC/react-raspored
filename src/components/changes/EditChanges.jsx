@@ -55,7 +55,6 @@ function EditChanges({ show, close, date }) {
 		} else {
 			reset();
 		}
-		// eslint-disable-next-line
 	}, [changeId]);
 
 	const onDelete = (values) => {
@@ -122,6 +121,7 @@ function EditChanges({ show, close, date }) {
 							name='changeClass'
 							label='Mijena li se redovni sat?'
 							ref={register}
+							style={{ margin: '1em 0 1em 0' }}
 						/>
 					</Form.Group>
 
