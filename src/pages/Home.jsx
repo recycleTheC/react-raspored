@@ -10,6 +10,7 @@ import { ArrowRightCircle, ArrowLeftCircle } from 'react-bootstrap-icons';
 
 import DailySchedule from '../components/schedule/DailySchedule';
 import DatePick from '../components/date-picker/DatePick';
+import Holidays from '../components/decorations/Holidays';
 
 export default function Home() {
 	const context = useContext(ScheduleContext);
@@ -87,6 +88,9 @@ export default function Home() {
 				)}
 			</>
 			{loading ? spinner : !schedule.msg && <DailySchedule date={date} />}
+			{schedule.options && schedule.options == 'xmas' && (
+				<Holidays date={date} />
+			)}
 		</div>
 	);
 }
