@@ -85,7 +85,8 @@ const ScheduleState = (props) => {
 
 					for (let k = 0; k < state.changes.length; k++) {
 						if (
-							state.changes[k].changed === current._id &&
+							state.changes[k].changed &&
+							state.changes[k].changed._id === current._id &&
 							state.changes[k].classId === id
 						) {
 							const regularId = current._id;
@@ -172,9 +173,15 @@ const ScheduleState = (props) => {
 				payload: res.data,
 			});
 		} catch (err) {
+			const data = err.response.data;
+			var content = {
+				msg: data.status,
+			};
+			if (data.options) content.options = data.options;
+
 			dispatch({
 				type: GET_DAILY_SCHEDULE,
-				payload: { msg: err.response.data.status },
+				payload: content,
 			});
 		}
 	};
