@@ -52,6 +52,23 @@ export default function Layout({ children }) {
 		</NavDropdown>
 	);
 
+	const notificationAdmin = (
+		<NavDropdown title='Obavijesti' id='basic-nav-dropdown'>
+			<NavDropdown.Item as={Link} to='/notifications/edit/new'>
+				Dodaj obavijest
+			</NavDropdown.Item>
+			<NavDropdown.Item as={Link} to='/notifications'>
+				Pregledaj obavijesti
+			</NavDropdown.Item>
+		</NavDropdown>
+	);
+
+	const notificationItem = (
+		<Nav.Link as={Link} to='/notifications'>
+			Obavijesti
+		</Nav.Link>
+	);
+
 	return (
 		<div>
 			<div style={{ minHeight: '96.5vh' }}>
@@ -68,6 +85,7 @@ export default function Layout({ children }) {
 									Bilješke i ispiti
 								</Nav.Link>
 								{isAuthenticated && scheduleItems}
+								{isAuthenticated ? notificationAdmin : notificationItem}
 							</Nav>
 						</Navbar.Collapse>
 						{isAuthenticated ? authLinks : guestLinks}

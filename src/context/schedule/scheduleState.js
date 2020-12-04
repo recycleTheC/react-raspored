@@ -28,6 +28,11 @@ import {
 	GET_ALL_NOTES,
 	SET_SELECTED_CLASS,
 	GET_ALL_EXAMS,
+	GET_NOTIFICATION,
+	GET_ALL_NOTIFICATIONS,
+	GET_NOTIFICATION_BY_ID,
+	DELETE_NOTIFICATION,
+	CREATE_NOTIFICATION,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -45,6 +50,8 @@ const ScheduleState = (props) => {
 		classNotes: [],
 		classExams: [],
 		selectedClass: '',
+		notification: {},
+		notifications: [],
 	};
 
 	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
@@ -162,6 +169,7 @@ const ScheduleState = (props) => {
 		await getExams(date);
 		await getNotes(date);
 		await getChanges(date);
+		await getNotification(date);
 
 		try {
 			const res = await axios.get(
@@ -629,6 +637,125 @@ const ScheduleState = (props) => {
 		});
 	};
 
+	const getNotification = async (date) => {
+		try {
+			const res = await axios.get(
+				`/api/notifications/day/${format(date, 'yyyy-MM-dd')}`
+			);
+
+			dispatch({
+				type: GET_NOTIFICATION,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_NOTIFICATION,
+				payload: {},
+			});
+		}
+	};
+
+	const getAllNotifications = async () => {
+		try {
+			const res = await axios.get('/api/notifications/all/');
+
+			dispatch({
+				type: GET_ALL_NOTIFICATIONS,
+				payload: res.data.sort(compareNotifications),
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_ALL_NOTIFICATIONS,
+				payload: [],
+			});
+		}
+	};
+
+	const getNotificationById = async (id) => {
+		setLoading();
+		try {
+			const res = await axios.get(`/api/notifications/id/${id}`);
+
+			dispatch({
+				type: GET_NOTIFICATION_BY_ID,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_NOTIFICATION_BY_ID,
+				payload: {},
+			});
+		}
+	};
+
+	const updateNotification = async (id, send) => {
+		try {
+			const options = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			};
+
+			const res = await axios.put(`/api/notifications/${id}`, send, options);
+
+			dispatch({
+				type: GET_NOTIFICATION_BY_ID,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_NOTIFICATION_BY_ID,
+				payload: null,
+			});
+		}
+	};
+
+	const createNotification = async (send) => {
+		try {
+			const options = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			};
+
+			const res = await axios.post('/api/notifications', send, options);
+
+			dispatch({
+				type: CREATE_NOTIFICATION,
+				payload: res.data.sort(compareNotifications),
+			});
+		} catch (err) {
+			dispatch({
+				type: CREATE_NOTIFICATION,
+				payload: [],
+			});
+		}
+	};
+
+	const deleteNotification = async (id) => {
+		try {
+			await axios.delete(`/api/notifications/${id}`);
+
+			dispatch({
+				type: DELETE_NOTIFICATION,
+			});
+		} catch (err) {
+			dispatch({
+				type: DELETE_NOTIFICATION,
+			});
+		}
+	};
+
+	const compareNotifications = (a, b) => {
+		if (a.fromDate > b.fromDate) {
+			return -1;
+		}
+		if (a.fromDate < b.fromDate) {
+			return 1;
+		}
+		return 0;
+	};
+
 	return (
 		<ScheduleContext.Provider
 			value={{
@@ -643,6 +770,8 @@ const ScheduleState = (props) => {
 				classNotes: state.classNotes,
 				classExams: state.classExams,
 				selectedClass: state.selectedClass,
+				notification: state.notification,
+				notifications: state.notifications,
 
 				getSchedule,
 				setLoading,
@@ -664,6 +793,12 @@ const ScheduleState = (props) => {
 				getAllNotes,
 				getAllExams,
 				setSelectedClass,
+				getNotification,
+				getAllNotifications,
+				getNotificationById,
+				updateNotification,
+				deleteNotification,
+				createNotification,
 			}}
 		>
 			{props.children}

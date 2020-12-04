@@ -23,10 +23,11 @@ import EditExam from '../exams/EditExam';
 import EditChanges from '../changes/EditChanges';
 
 import './style.css';
+import { Link } from 'react-router-dom';
 
 function DailySchedule({ date }) {
 	const scheduleContext = useContext(ScheduleContext);
-	const { schedule, exams, changes, loading } = scheduleContext;
+	const { schedule, exams, changes, loading, notification } = scheduleContext;
 	const authContext = useContext(AuthContext);
 
 	const [showModal, setModal] = useState({
@@ -163,12 +164,36 @@ function DailySchedule({ date }) {
 		</ListGroup.Item>
 	);
 
+	const notificationAlert = (
+		<ListGroup.Item key='changes' className='text-center' style={{ border: 0 }}>
+			<Badge
+				pill
+				variant='primary'
+				as={Link}
+				to={`/notifications/${notification._id}`}
+			>
+				<span
+					style={{
+						fontSize: '1rem',
+					}}
+				>
+					<ExclamationTriangle
+						color='yellow'
+						size='1rem'
+						style={{ marginBottom: '0.125em' }}
+					/>{' '}
+					{notification.title}
+				</span>
+			</Badge>
+		</ListGroup.Item>
+	);
+
 	return (
 		<ListGroup variant='flush' className='mt-2'>
 			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
 			{!loading && changes.length > 0 && changesAlert}
 			{!loading && exams.length > 0 && examList}
-
+			{!loading && notification.title && notificationAlert}
 			{schedule.map((row) => {
 				const {
 					location,

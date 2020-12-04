@@ -22,6 +22,11 @@ import {
 	GET_ALL_NOTES,
 	SET_SELECTED_CLASS,
 	GET_ALL_EXAMS,
+	GET_NOTIFICATION,
+	GET_ALL_NOTIFICATIONS,
+	GET_NOTIFICATION_BY_ID,
+	DELETE_NOTIFICATION,
+	CREATE_NOTIFICATION,
 } from '../types';
 
 export default (state, action) => {
@@ -130,6 +135,28 @@ export default (state, action) => {
 			return {
 				...state,
 				classExams: action.payload,
+				loading: false,
+			};
+		case GET_NOTIFICATION:
+			return {
+				...state,
+				notification: action.payload,
+			};
+		case GET_ALL_NOTIFICATIONS:
+		case CREATE_NOTIFICATION:
+			return {
+				...state,
+				notifications: action.payload,
+			};
+		case DELETE_NOTIFICATION:
+			return {
+				...state,
+				notifications: [],
+			};
+		case GET_NOTIFICATION_BY_ID:
+			return {
+				...state,
+				notification: action.payload,
 				loading: false,
 			};
 		default:

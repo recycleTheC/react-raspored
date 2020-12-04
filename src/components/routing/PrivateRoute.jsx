@@ -3,16 +3,25 @@ import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import AuthContext from '../../context/auth/authContext';
+import Spinner from '../spinner/Spinner';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 	const authContext = useContext(AuthContext);
-	const { isAuthenticated } = authContext;
+	const { isAuthenticated, token } = authContext;
+
+	if (!isAuthenticated && token) {
+		return <Spinner />;
+	}
 
 	return (
 		<Route
 			{...rest}
 			render={(props) =>
-				!isAuthenticated ? <Redirect to='/login' /> : <Component {...props} />
+				!isAuthenticated ? (
+					<Redirect to='/login' />
+				) : (
+					<Component {...rest} {...props} />
+				)
 			}
 		/>
 	);
