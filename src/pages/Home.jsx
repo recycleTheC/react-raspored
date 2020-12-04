@@ -19,7 +19,6 @@ export default function Home() {
 
 	useEffect(() => {
 		getSchedule(date);
-		// eslint-disable-next-line
 	}, [date]);
 
 	const spinner = (
