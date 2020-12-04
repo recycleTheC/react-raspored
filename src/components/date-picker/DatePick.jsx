@@ -17,15 +17,7 @@ const DatePick = ({ date, setDate }) => {
 		<DatePicker
 			selected={date}
 			onChange={(date) => setDate(date)}
-			customInput={
-				<p>
-					{format(date, 'eeee, dd.MM.yyyy.', { locale })}{' '}
-					{/**
-					 * @todo Better way to show a calendar icon
-					 */}
-					{/* <Calendar3 size='0.8rem' style={{ verticalAlign: 'baseline' }} /> */}
-				</p>
-			}
+			customInput={<p>{format(date, 'eeee, dd.MM.yyyy.', { locale })} </p>}
 			locale={locale}
 			filterDate={filterDays}
 			popperPlacement='auto'
