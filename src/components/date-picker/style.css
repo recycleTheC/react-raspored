@@ -1,0 +1,7 @@
+.react-datepicker__day--weekend {
+	color: darkred;
+}
+
+.react-datepicker__day--outside-month {
+	color: #ccc;
+}

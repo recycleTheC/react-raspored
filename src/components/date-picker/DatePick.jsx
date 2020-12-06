@@ -4,6 +4,7 @@ import locale from 'date-fns/locale/hr';
 import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import 'react-datepicker/dist/react-datepicker.css';
+import './style.css';
 
 const DatePick = ({ date, setDate }) => {
 	const filterDays = (date) => {
