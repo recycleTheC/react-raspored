@@ -51,6 +51,7 @@ const ScheduleState = (props) => {
 		classExams: [],
 		selectedClass: '',
 		notification: {},
+		dailyNotifications: [],
 		notifications: [],
 	};
 
@@ -650,7 +651,7 @@ const ScheduleState = (props) => {
 		} catch (err) {
 			dispatch({
 				type: GET_NOTIFICATION,
-				payload: {},
+				payload: [],
 			});
 		}
 	};
@@ -705,7 +706,7 @@ const ScheduleState = (props) => {
 		} catch (err) {
 			dispatch({
 				type: GET_NOTIFICATION_BY_ID,
-				payload: null,
+				payload: {},
 			});
 		}
 	};
@@ -772,6 +773,7 @@ const ScheduleState = (props) => {
 				selectedClass: state.selectedClass,
 				notification: state.notification,
 				notifications: state.notifications,
+				dailyNotifications: state.dailyNotifications,
 
 				getSchedule,
 				setLoading,

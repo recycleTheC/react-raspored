@@ -27,7 +27,13 @@ import { Link } from 'react-router-dom';
 
 function DailySchedule({ date }) {
 	const scheduleContext = useContext(ScheduleContext);
-	const { schedule, exams, changes, loading, notification } = scheduleContext;
+	const {
+		schedule,
+		exams,
+		changes,
+		loading,
+		dailyNotifications,
+	} = scheduleContext;
 	const authContext = useContext(AuthContext);
 
 	const [showModal, setModal] = useState({
@@ -166,13 +172,8 @@ function DailySchedule({ date }) {
 
 	const notificationAlert = (
 		<ListGroup.Item key='changes' className='text-center' style={{ border: 0 }}>
-			<Badge
-				pill
-				variant='primary'
-				as={Link}
-				to={`/notifications/${notification._id}`}
-			>
-				<span
+			<Badge pill variant='primary' style={{ whiteSpace: 'break-spaces' }}>
+				<div
 					style={{
 						fontSize: '1rem',
 					}}
@@ -182,8 +183,21 @@ function DailySchedule({ date }) {
 						size='1rem'
 						style={{ marginBottom: '0.125em' }}
 					/>{' '}
-					{notification.title}
-				</span>
+					{dailyNotifications.length > 0 &&
+						dailyNotifications
+							.map((item) => {
+								return (
+									<Link
+										to={`/notifications/${item._id}`}
+										key={item._id}
+										style={{ color: 'inherit', textDecoration: 'inherit' }}
+									>
+										<span>{item.title}</span>
+									</Link>
+								);
+							})
+							.reduce((prev, curr) => [prev, ' / ', curr])}
+				</div>
 			</Badge>
 		</ListGroup.Item>
 	);
@@ -191,9 +205,10 @@ function DailySchedule({ date }) {
 	return (
 		<ListGroup variant='flush' className='mt-2'>
 			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
-			{!loading && changes.length > 0 && changesAlert}
-			{!loading && exams.length > 0 && examList}
-			{!loading && notification.title && notificationAlert}
+			{dailyNotifications.length > 0 && notificationAlert}
+			{changes.length > 0 && changesAlert}
+			{exams.length > 0 && examList}
+
 			{schedule.map((row) => {
 				const {
 					location,

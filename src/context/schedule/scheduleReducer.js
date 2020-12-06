@@ -140,7 +140,7 @@ export default (state, action) => {
 		case GET_NOTIFICATION:
 			return {
 				...state,
-				notification: action.payload,
+				dailyNotifications: action.payload,
 			};
 		case GET_ALL_NOTIFICATIONS:
 		case CREATE_NOTIFICATION:
