@@ -171,7 +171,11 @@ function DailySchedule({ date }) {
 	);
 
 	const notificationAlert = (
-		<ListGroup.Item key='changes' className='text-center' style={{ border: 0 }}>
+		<ListGroup.Item
+			key='notifications'
+			className='text-center'
+			style={{ border: 0 }}
+		>
 			<Badge pill variant='primary' style={{ whiteSpace: 'break-spaces' }}>
 				<div
 					style={{
