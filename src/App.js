@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound';
 import Notifications from './pages/notifications/Notifications';
 import Notification from './pages/notifications/Notification';
 import EditNotification from './pages/notifications/EditNotification';
+import Calendar from './components/calendar/Calendar';
 
 import setAuthToken from './utils/setAuthToken';
 
@@ -53,6 +54,7 @@ function App() {
 									path='/notifications/edit/:id'
 									component={EditNotification}
 								/>
+								<Route exact path='/calendar' component={Calendar} />
 								<Route component={NotFound} />{' '}
 								{/* MUST be at the END of the switch*/}
 							</Switch>

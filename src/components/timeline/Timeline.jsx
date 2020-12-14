@@ -11,7 +11,7 @@ export const Timeline = () => {
 	const context = useContext(ScheduleContext);
 	const {
 		getAllNotes,
-		getAllExams,
+		getExamsById,
 		getClasses,
 		classes,
 		classNotes,
@@ -37,7 +37,7 @@ export const Timeline = () => {
 		if (classId) {
 			setSelectedClass(classId);
 			getAllNotes(classId);
-			getAllExams(classId);
+			getExamsById(classId);
 		}
 	}, [classId]);
 

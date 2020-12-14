@@ -27,6 +27,7 @@ import {
 	GET_NOTIFICATION_BY_ID,
 	DELETE_NOTIFICATION,
 	CREATE_NOTIFICATION,
+	GET_CLASS_EXAMS,
 } from '../types';
 
 export default (state, action) => {
@@ -131,10 +132,16 @@ export default (state, action) => {
 				selectedClass: action.payload,
 			};
 
-		case GET_ALL_EXAMS:
+		case GET_CLASS_EXAMS:
 			return {
 				...state,
 				classExams: action.payload,
+				loading: false,
+			};
+		case GET_ALL_EXAMS:
+			return {
+				...state,
+				exams: action.payload,
 				loading: false,
 			};
 		case GET_NOTIFICATION:

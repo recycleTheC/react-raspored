@@ -84,6 +84,9 @@ export default function Layout({ children }) {
 								<Nav.Link as={Link} to='/notes'>
 									Bilješke i ispiti
 								</Nav.Link>
+								<Nav.Link as={Link} to='/calendar'>
+									Kalendar
+								</Nav.Link>
 								{isAuthenticated && scheduleItems}
 								{isAuthenticated ? notificationAdmin : notificationItem}
 							</Nav>

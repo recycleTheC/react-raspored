@@ -33,6 +33,7 @@ import {
 	GET_NOTIFICATION_BY_ID,
 	DELETE_NOTIFICATION,
 	CREATE_NOTIFICATION,
+	GET_CLASS_EXAMS,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -394,7 +395,9 @@ const ScheduleState = (props) => {
 
 	const getExams = async (date) => {
 		try {
-			const res = await axios.get(`/api/exam/${format(date, 'yyyy-MM-dd')}`);
+			const res = await axios.get(
+				`/api/exam/date/${format(date, 'yyyy-MM-dd')}`
+			);
 
 			dispatch({
 				type: GET_EXAMS,
@@ -613,11 +616,29 @@ const ScheduleState = (props) => {
 		}
 	};
 
-	const getAllExams = async (classId) => {
+	const getExamsById = async (classId) => {
 		setLoading();
 
 		try {
 			const res = await axios.get(`/api/exam/class/${classId}`);
+
+			dispatch({
+				type: GET_CLASS_EXAMS,
+				payload: res.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_CLASS_EXAMS,
+				payload: [],
+			});
+		}
+	};
+
+	const getAllExams = async () => {
+		setLoading();
+
+		try {
+			const res = await axios.get('/api/exam/all/');
 
 			dispatch({
 				type: GET_ALL_EXAMS,
@@ -793,6 +814,7 @@ const ScheduleState = (props) => {
 				getClasses,
 				clearSchedule,
 				getAllNotes,
+				getExamsById,
 				getAllExams,
 				setSelectedClass,
 				getNotification,
