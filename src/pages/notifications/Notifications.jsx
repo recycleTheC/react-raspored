@@ -15,7 +15,7 @@ export default function Notifications() {
 	}
 
 	return (
-		<>
+		<div className='mb-4'>
 			<h1>Obavijesti</h1>
 			{notifications.map((item) => {
 				return (
@@ -57,6 +57,6 @@ export default function Notifications() {
 					</ListGroup>
 				);
 			})}
-		</>
+		</div>
 	);
 }
