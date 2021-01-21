@@ -16,7 +16,7 @@ import {
 } from 'react-bootstrap';
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
-import { ExclamationTriangle } from 'react-bootstrap-icons';
+import { ExclamationTriangle, StarFill } from 'react-bootstrap-icons';
 
 import EditNote from '../notes/EditNote';
 import EditExam from '../exams/EditExam';
@@ -206,6 +206,10 @@ function DailySchedule({ date }) {
 		</ListGroup.Item>
 	);
 
+	const currentTime =
+		new Date().getHours() + ':' + (new Date().getMinutes() + 5);
+	const isToday = new Date().toDateString() == date.toDateString();
+
 	return (
 		<ListGroup variant='flush' className='mt-2'>
 			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
@@ -222,6 +226,8 @@ function DailySchedule({ date }) {
 					timeEnd,
 					classes,
 				} = row;
+
+				const isCurrent = currentTime >= timeStart && currentTime <= timeEnd;
 
 				return (
 					<ListGroup.Item key={row.scheduleId}>
@@ -254,6 +260,11 @@ function DailySchedule({ date }) {
 									{classes.map((x) => x.changed).includes(true) && (
 										<Badge pill variant='danger'>
 											izmjena
+										</Badge>
+									)}
+									{isToday && isCurrent && (
+										<Badge pill variant='danger'>
+											<StarFill color='yellow' />
 										</Badge>
 									)}
 								</div>
