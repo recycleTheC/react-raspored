@@ -49,7 +49,11 @@ export default function Notifications() {
 									</div>
 									<p className='mb-0'>
 										{item.content &&
-											item.content.split(' ').splice(0, 24).join(' ') + '...'}
+											item.content
+												.replace(/\*/g, '')
+												.split(' ')
+												.splice(0, 24)
+												.join(' ') + '...'}
 									</p>
 								</Col>
 							</Row>
