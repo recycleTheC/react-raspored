@@ -16,7 +16,7 @@ import {
 } from 'react-bootstrap';
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
-import { ExclamationTriangle, StarFill } from 'react-bootstrap-icons';
+import { ExclamationTriangle } from 'react-bootstrap-icons';
 
 import EditNote from '../notes/EditNote';
 import EditExam from '../exams/EditExam';
@@ -24,6 +24,7 @@ import EditChanges from '../changes/EditChanges';
 
 import './style.css';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function DailySchedule({ date }) {
 	const scheduleContext = useContext(ScheduleContext);
@@ -206,9 +207,34 @@ function DailySchedule({ date }) {
 		</ListGroup.Item>
 	);
 
-	const currentTime =
-		new Date().getHours() + ':' + (new Date().getMinutes() + 5);
+	const [currentTime, setTime] = useState(new Date());
 	const isToday = new Date().toDateString() == date.toDateString();
+	const [currentTimeString, setCurrentStr] = useState('');
+
+	useEffect(() => {
+		if (isToday) {
+			const interval = setInterval(() => {
+				setTime(new Date());
+			}, 5000);
+
+			return () => {
+				clearInterval(interval);
+			};
+		}
+	}, []);
+
+	useEffect(() => {
+		const hour =
+			currentTime.getHours() < 10
+				? '0' + currentTime.getHours()
+				: currentTime.getHours();
+		const minute =
+			currentTime.getMinutes() < 10
+				? '0' + currentTime.getMinutes()
+				: currentTime.getMinutes();
+
+		setCurrentStr(hour + ':' + minute);
+	}, [currentTime]);
 
 	return (
 		<ListGroup variant='flush' className='mt-2'>
@@ -227,7 +253,8 @@ function DailySchedule({ date }) {
 					classes,
 				} = row;
 
-				const isCurrent = currentTime >= timeStart && currentTime <= timeEnd;
+				const isCurrent =
+					currentTimeString >= timeStart && currentTimeString <= timeEnd;
 
 				return (
 					<ListGroup.Item key={row.scheduleId}>
@@ -263,8 +290,9 @@ function DailySchedule({ date }) {
 										</Badge>
 									)}
 									{isToday && isCurrent && (
-										<Badge pill variant='danger'>
-											<StarFill color='yellow' />
+										<Badge variant='danger' className='pulser'>
+											{/* <StarFill color='yellow' /> */}
+											LIVE
 										</Badge>
 									)}
 								</div>

@@ -11,3 +11,16 @@
 .changed {
 	text-decoration: red line-through;
 }
+
+.pulser {
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.8);
+	}
+	80% {
+		box-shadow: 0 0 0 8px rgba(255, 82, 82, 0);
+	}
+}
