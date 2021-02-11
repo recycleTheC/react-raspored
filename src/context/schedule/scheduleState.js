@@ -185,7 +185,7 @@ const ScheduleState = (props) => {
 		} catch (err) {
 			const data = err.response.data;
 			var content = {
-				msg: data.status,
+				msg: data.status || 'Greška na poslužitelju!',
 			};
 			if (data.options) content.options = data.options;
 
