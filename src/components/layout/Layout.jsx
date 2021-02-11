@@ -102,7 +102,7 @@ export default function Layout({ children }) {
 				<Container>
 					<Row className='py-1'>
 						<Col md={(4, { order: 'first' })} xs='12'>
-							<small>&copy; Mario Kopjar 2020.</small>
+							<small>&copy; Mario Kopjar 2021.</small>
 						</Col>
 						<Col md={4} xs={(12, { order: 'last' })}>
 							<small style={{ display: 'inline-block' }}>
