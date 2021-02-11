@@ -49,9 +49,9 @@ export const Calendar = () => {
 							'petak',
 							'subota',
 							'nedjelja',
-						].map((d) => (
+						].map((day) => (
 							<div className='days' key={v4()}>
-								{d}
+								{day}
 							</div>
 						))}
 						{calendar.map((day) => (
@@ -73,7 +73,9 @@ export const Calendar = () => {
 				{result.length > 0 ? (
 					result.map((item) => (
 						<>
-							<h4 key={item._id}>{item.classKey.name}</h4>
+							<h4 key={item._id}>
+								{item.classKey.name} ({item.classId}. sat)
+							</h4>
 							<p>{item.content}</p>
 						</>
 					))
