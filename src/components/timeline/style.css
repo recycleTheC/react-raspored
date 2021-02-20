@@ -145,3 +145,19 @@
 .exam-done {
 	box-shadow: 0 0 5px rgba(0, 128, 0, 0.8);
 }
+
+[data-theme='dark'] .timeline-item-content {
+	background-color: var(--gray) !important;
+}
+
+[data-theme='dark'] .timeline-item-content::after {
+	background-color: var(--gray) !important;
+}
+
+[data-theme='dark'] select {
+	color: var(--dark) !important;
+}
+
+[data-theme='dark'] option {
+	color: var(--dark) !important;
+}

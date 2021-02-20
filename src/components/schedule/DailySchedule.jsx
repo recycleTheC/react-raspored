@@ -237,7 +237,7 @@ function DailySchedule({ date }) {
 	}, [currentTime]);
 
 	return (
-		<ListGroup variant='flush' className='mt-2'>
+		<ListGroup variant='flush' className='mt-2 mb-3'>
 			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
 			{dailyNotifications.length > 0 && notificationAlert}
 			{changes.length > 0 && changesAlert}

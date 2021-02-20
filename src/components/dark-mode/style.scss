@@ -1,0 +1,70 @@
+// Bootstrap and its default variables
+
+$dark: #272b30;
+$gray-800: #3a3f44;
+
+@import '../../../node_modules/bootstrap/scss/bootstrap';
+
+@mixin dark-mode {
+	* {
+		color: $white !important;
+	}
+
+	.text-success {
+		color: $success !important;
+	}
+
+	a,
+	.dropdown-menu {
+		background-color: $dark !important;
+	}
+
+	.modal-content {
+		background: $gray-800;
+	}
+
+	.navbar-brand,
+	.nav-link {
+		color: $white !important;
+	}
+
+	.bg-light {
+		background-color: $dark !important;
+		color: $white !important;
+	}
+
+	.badge-light {
+		background-color: $dark;
+		color: $white;
+	}
+
+	.badge-warning {
+		color: $dark !important;
+	}
+
+	.list-group-item {
+		background-color: $gray-800;
+	}
+
+	.list-group-item-action {
+		color: $dark !important;
+	}
+
+	.navbar-toggler-icon {
+		filter: invert(1);
+	}
+
+	textarea {
+		color: $dark !important;
+	}
+}
+
+[data-theme='dark'] {
+	background-color: $gray-800 !important;
+	@include dark-mode;
+}
+
+#theme-switch:checked ~ .custom-control-label::before {
+	background-color: $gray-800;
+	border-color: $gray-800;
+}

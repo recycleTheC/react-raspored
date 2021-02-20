@@ -8,6 +8,7 @@ import { BoxArrowRight } from 'react-bootstrap-icons';
 
 import AuthContext from '../../context/auth/authContext';
 import PropTypes from 'prop-types';
+import { Switch } from '../dark-mode/Switch';
 
 export default function Layout({ children }) {
 	const authContext = useContext(AuthContext);
@@ -22,23 +23,19 @@ export default function Layout({ children }) {
 	const hello = user ? 'Pozdrav, ' + user.name : '';
 
 	const authLinks = (
-		<Navbar.Collapse className='justify-content-end'>
-			<Nav>
-				<NavDropdown as={Navbar.text} title={hello} id='basic-nav-dropdown'>
-					<NavDropdown.Item onClick={logout}>
-						<BoxArrowRight /> Odjava
-					</NavDropdown.Item>
-				</NavDropdown>
-			</Nav>
-		</Navbar.Collapse>
+		<Nav>
+			<NavDropdown as={Navbar.text} title={hello} id='basic-nav-dropdown'>
+				<NavDropdown.Item onClick={logout}>
+					<BoxArrowRight /> Odjava
+				</NavDropdown.Item>
+			</NavDropdown>
+		</Nav>
 	);
 
 	const guestLinks = (
-		<Navbar.Collapse className='justify-content-end'>
-			<Navbar.Text as={Link} to='/login'>
-				Prijava
-			</Navbar.Text>
-		</Navbar.Collapse>
+		<Navbar.Text as={Link} to='/login'>
+			Prijava
+		</Navbar.Text>
 	);
 
 	const scheduleItems = (
@@ -91,7 +88,11 @@ export default function Layout({ children }) {
 								{isAuthenticated ? notificationAdmin : notificationItem}
 							</Nav>
 						</Navbar.Collapse>
-						{isAuthenticated ? authLinks : guestLinks}
+
+						<Navbar.Collapse className='justify-content-end'>
+							{isAuthenticated ? authLinks : guestLinks}
+							<Switch />
+						</Navbar.Collapse>
 					</Container>
 				</Navbar>
 
