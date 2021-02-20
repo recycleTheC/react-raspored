@@ -1,45 +1,94 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import PropTypes from 'prop-types';
 import ScheduleContext from '../../context/schedule/scheduleContext';
 import { useForm } from 'react-hook-form';
+import DatePick from './date-picker/DatePick';
 
 function EditNote({ show, close, date }) {
 	const context = useContext(ScheduleContext);
-	const { schedule, setNotes, deleteNote, notes, updateNotes } = context;
+	const {
+		schedule,
+		setNotes,
+		deleteNote,
+		notes,
+		updateNotes,
+		getAvailableDates,
+		availableDates,
+	} = context;
 
 	const { handleSubmit, register, errors, setValue, watch } = useForm({
 		defaultValues: { noteId: '0' },
 	});
 
+	const [reminder, setReminder] = useState(new Date());
+
 	const onSubmit = (values) => {
-		const classKey = values.class.split(':')[0];
-		const classId = values.class.split(':')[1];
-		const note = values.note;
 		const id = values.noteId;
 
+		const send = {
+			date: format(date, 'yyyy-MM-dd'),
+			classKey: values._class.split(':')[0],
+			classId: values._class.split(':')[1],
+			note: values.note,
+		};
+
+		if (toRemind) {
+			send.title = values.title;
+			send.reminder = format(reminder, 'yyyy-MM-dd');
+		}
+
+		if (values.hidden) send.hidden = values.hidden;
+
 		if (id === '0') {
-			setNotes(date, classKey, classId, note);
+			setNotes(send);
 		} else {
-			updateNotes(id, classKey, classId, note);
+			send.id = id;
+			updateNotes(send);
 		}
 		close({ target: { name: 'notes' } });
 	};
 
-	const { noteId } = watch();
+	const { noteId, toRemind, _class } = watch();
 
 	useEffect(() => {
 		if (noteId !== '0' && noteId !== undefined) {
 			const selected = notes.find((note) => note._id === noteId);
 
 			setValue('note', selected.note);
-			setValue('class', selected.classKey + ':' + selected.classId);
+			setValue('_class', selected.classKey + ':' + selected.classId);
+			setValue('hidden', selected.hidden);
+
+			if (selected.reminder) {
+				setValue('toRemind', true);
+				setValue('title', selected.title);
+				setReminder(new Date(selected.reminder));
+			} else {
+				setValue('title', '');
+				setValue('toRemind', false);
+				setValue('hidden', false);
+			}
 		} else {
 			setValue('note', '');
+			setValue('title', '');
+			setValue('toRemind', false);
+			setValue('hidden', false);
 		}
 		// eslint-disable-next-line
 	}, [noteId]);
+
+	useEffect(() => {
+		if (toRemind) {
+			getAvailableDates(_class.split(':')[0], format(date, 'yyyy-MM-dd'));
+		}
+	}, [toRemind, _class]);
+
+	useEffect(() => {
+		if (availableDates.length > 0 && noteId === '0') {
+			setReminder(new Date(availableDates[0]));
+		}
+	}, [availableDates]);
 
 	const onDelete = (values) => {
 		deleteNote(values.noteId);
@@ -67,11 +116,12 @@ function EditNote({ show, close, date }) {
 								Nova bilješka
 							</option>
 							{notes.map((x) => {
-								return (
-									<option key={x._id} value={x._id}>
-										Bilješka za {x.classId}. sat
-									</option>
-								);
+								if (isSameDay(date, new Date(x.date)))
+									return (
+										<option key={x._id} value={x._id}>
+											Bilješka za {x.classId}. sat
+										</option>
+									);
 							})}
 						</Form.Control>
 					</Form.Group>
@@ -82,7 +132,7 @@ function EditNote({ show, close, date }) {
 						</Form.Label>
 						<Form.Control
 							as='select'
-							name='class'
+							name='_class'
 							ref={register({ required: 'Obavezno' })}
 						>
 							{schedule.map((x) => {
@@ -98,7 +148,7 @@ function EditNote({ show, close, date }) {
 					</Form.Group>
 					<Form.Group controlId='textArea'>
 						<Form.Label>
-							Bilješka{errors.note && <small>({errors.note.message})</small>}
+							Bilješka {errors.note && <small>({errors.note.message})</small>}
 						</Form.Label>
 						<Form.Control
 							as='textarea'
@@ -107,6 +157,43 @@ function EditNote({ show, close, date }) {
 							ref={register({ required: 'Obavezno' })}
 						/>
 					</Form.Group>
+
+					<Form.Group>
+						<Form.Check
+							type='checkbox'
+							name='toRemind'
+							label='Obveza za slijedeći sat?'
+							ref={register()}
+							style={{ margin: '1em 0 1em 0' }}
+						/>
+					</Form.Group>
+
+					<div style={{ display: !toRemind && 'none' }}>
+						<Form.Group controlId='textArea'>
+							<Form.Label>
+								Naslov {errors.note && <small>({errors.note.message})</small>}
+							</Form.Label>
+							<Form.Control name='title' ref={register()} />
+						</Form.Group>
+
+						<Form.Group>
+							<Form.Check
+								type='checkbox'
+								name='hidden'
+								label='Sakrij prikaz za današnji dan?'
+								ref={register()}
+								style={{ margin: '1em 0 1em 0' }}
+							/>
+						</Form.Group>
+
+						{toRemind && (
+							<DatePick
+								date={reminder}
+								setDate={setReminder}
+								filtered={availableDates}
+							/>
+						)}
+					</div>
 				</Form>
 			</Modal.Body>
 			<Modal.Footer>

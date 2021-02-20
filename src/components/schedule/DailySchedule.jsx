@@ -17,6 +17,8 @@ import {
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
 import { ExclamationTriangle } from 'react-bootstrap-icons';
+import { format } from 'date-fns';
+import locale from 'date-fns/locale/hr';
 
 import EditNote from '../notes/EditNote';
 import EditExam from '../exams/EditExam';
@@ -364,20 +366,61 @@ function DailySchedule({ date }) {
 															<ul className='pl-4'>
 																{item.notes.map((note) => (
 																	<li key={uuid()}>
-																		<small>
-																			<ReactMarkdown
-																				source={note}
-																				renderers={{
-																					paragraph: (props) => {
-																						return (
-																							<p className='mb-1' style={{}}>
-																								{props.children}
-																							</p>
-																						);
-																					},
-																				}}
-																			/>
-																		</small>
+																		{!note.reminder ? (
+																			<small>
+																				<ReactMarkdown
+																					source={note.text}
+																					renderers={{
+																						paragraph: (props) => {
+																							return (
+																								<p className='mb-1' style={{}}>
+																									{props.children}
+																								</p>
+																							);
+																						},
+																					}}
+																				/>
+																			</small>
+																		) : (
+																			<OverlayTrigger
+																				placement='bottom'
+																				delay={{ show: 250, hide: 500 }}
+																				overlay={
+																					<Popover>
+																						<Popover.Content>
+																							<ReactMarkdown
+																								source={note.text}
+																								renderers={{
+																									paragraph: (props) => {
+																										return (
+																											<p
+																												className='mb-1'
+																												style={{}}
+																											>
+																												{props.children}
+																											</p>
+																										);
+																									},
+																								}}
+																							/>
+																						</Popover.Content>
+																					</Popover>
+																				}
+																			>
+																				<Badge pill variant='secondary'>
+																					{note.title ? note.title : 'Zadatak'}{' '}
+																					(
+																					{format(
+																						new Date(note.reminder),
+																						'dd.MM.yyyy',
+																						{
+																							locale,
+																						}
+																					)}
+																					)
+																				</Badge>
+																			</OverlayTrigger>
+																		)}
 																	</li>
 																))}
 															</ul>

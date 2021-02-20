@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 
 import ScheduleContext from './scheduleContext';
 import ScheduleReducer from './scheduleReducer';
@@ -34,10 +34,13 @@ import {
 	DELETE_NOTIFICATION,
 	CREATE_NOTIFICATION,
 	GET_CLASS_EXAMS,
+	CHANGE_DATE,
+	GET_AVAILABLE_DATES,
 } from '../types';
 
 const ScheduleState = (props) => {
 	const initialState = {
+		date: new Date(),
 		schedule: [],
 		teachers: [],
 		loading: false,
@@ -54,14 +57,25 @@ const ScheduleState = (props) => {
 		notification: {},
 		dailyNotifications: [],
 		notifications: [],
+		availableDates: [],
 	};
 
 	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
 
 	useEffect(() => {
 		if (state.reload) prepareSchedule();
-		// eslint-disable-next-line
 	}, [state.reload]);
+
+	useEffect(() => {
+		getSchedule();
+	}, [state.date]);
+
+	const setGlobalDate = (date) => {
+		dispatch({
+			type: CHANGE_DATE,
+			payload: date,
+		});
+	};
 
 	// Get schedule
 
@@ -118,10 +132,40 @@ const ScheduleState = (props) => {
 					current.exams = [];
 
 					let classNotes = state.notes.filter(
-						(note) => note.classKey === classKey && note.classId === id
+						(note) =>
+							note.classKey === classKey && note.classId === id && !note.hidden
 					);
+
+					for (let n = 0; n < state.notes.length; n++) {
+						if (
+							state.notes[n].classKey === classKey &&
+							state.notes[n].reminder &&
+							!state.notes[n].reminded
+						) {
+							let insert = {
+								text: state.notes[n].note,
+							};
+
+							if (isSameDay(new Date(state.notes[n].reminder), state.date)) {
+								if (state.notes[n].reminder)
+									insert.reminder = state.notes[n].date;
+								if (state.notes[n].title) insert.title = state.notes[n].title;
+								current.notes.push(insert);
+								state.notes[n].reminded = true;
+							}
+						}
+					}
+
 					classNotes.forEach((item) => {
-						current.notes.push(item.note);
+						let insert = {
+							text: item.note,
+						};
+
+						if (!item.reminder) {
+							current.notes.push(insert);
+						} else if (isSameDay(new Date(item.date), state.date)) {
+							current.notes.push(insert);
+						}
 					});
 
 					let classExams = state.exams.filter(
@@ -164,18 +208,18 @@ const ScheduleState = (props) => {
 		});
 	};
 
-	const getSchedule = async (date) => {
+	const getSchedule = async () => {
 		clearSchedule();
 		await setLoading();
 
-		await getExams(date);
-		await getNotes(date);
-		await getChanges(date);
-		await getNotification(date);
+		await getExams(state.date);
+		await getNotes(state.date);
+		await getChanges(state.date);
+		await getNotification(state.date);
 
 		try {
 			const res = await axios.get(
-				`/api/schedule/${format(date, 'yyyy-MM-dd')}`
+				`/api/schedule/${format(state.date, 'yyyy-MM-dd')}`
 			);
 
 			dispatch({
@@ -204,7 +248,7 @@ const ScheduleState = (props) => {
 
 			dispatch({
 				type: GET_NOTES,
-				payload: res.data,
+				payload: res.data.sort(compareNotes),
 			});
 		} catch (err) {
 			dispatch({
@@ -240,15 +284,8 @@ const ScheduleState = (props) => {
 
 	// Set new note
 
-	const setNotes = async (date, classKey, id, note) => {
+	const setNotes = async (send) => {
 		setLoading();
-
-		const send = {
-			classId: id,
-			classKey: classKey,
-			note: note,
-			date: format(date, 'yyyy-MM-dd'),
-		};
 
 		const options = {
 			headers: {
@@ -273,14 +310,8 @@ const ScheduleState = (props) => {
 
 	// Update note
 
-	const updateNotes = async (id, classKey, classId, note) => {
+	const updateNotes = async (send) => {
 		setLoading();
-
-		const send = {
-			classId: classId,
-			classKey: classKey,
-			note: note,
-		};
 
 		const options = {
 			headers: {
@@ -289,7 +320,7 @@ const ScheduleState = (props) => {
 		};
 
 		try {
-			const res = await axios.put(`/api/notes/${id}`, send, options);
+			const res = await axios.put(`/api/notes/${send.id}`, send, options);
 
 			dispatch({
 				type: UPDATE_NOTES,
@@ -768,6 +799,26 @@ const ScheduleState = (props) => {
 		}
 	};
 
+	const getAvailableDates = async (id, date) => {
+		try {
+			const result = await axios.get(`/api/class/${date}/${id}`);
+
+			const dates = result.data.map((item) => {
+				return format(new Date(item.date), 'yyyy-MM-dd');
+			});
+
+			dispatch({
+				type: GET_AVAILABLE_DATES,
+				payload: dates,
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_AVAILABLE_DATES,
+				payload: [],
+			});
+		}
+	};
+
 	const compareNotifications = (a, b) => {
 		if (a.fromDate > b.fromDate) {
 			return -1;
@@ -778,9 +829,20 @@ const ScheduleState = (props) => {
 		return 0;
 	};
 
+	const compareNotes = (a, b) => {
+		if (new Date(a.date) > new Date(b.date)) {
+			return 1;
+		}
+		if (new Date(a.date) < new Date(b.date)) {
+			return -1;
+		}
+		return 0;
+	};
+
 	return (
 		<ScheduleContext.Provider
 			value={{
+				date: state.date,
 				schedule: state.schedule,
 				teachers: state.teachers,
 				loading: state.loading,
@@ -795,6 +857,7 @@ const ScheduleState = (props) => {
 				notification: state.notification,
 				notifications: state.notifications,
 				dailyNotifications: state.dailyNotifications,
+				availableDates: state.availableDates,
 
 				getSchedule,
 				setLoading,
@@ -823,6 +886,8 @@ const ScheduleState = (props) => {
 				updateNotification,
 				deleteNotification,
 				createNotification,
+				setGlobalDate,
+				getAvailableDates,
 			}}
 		>
 			{props.children}

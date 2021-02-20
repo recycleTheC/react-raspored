@@ -28,10 +28,17 @@ import {
 	DELETE_NOTIFICATION,
 	CREATE_NOTIFICATION,
 	GET_CLASS_EXAMS,
+	CHANGE_DATE,
+	GET_AVAILABLE_DATES,
 } from '../types';
 
 export default (state, action) => {
 	switch (action.type) {
+		case CHANGE_DATE:
+			return {
+				...state,
+				date: action.payload,
+			};
 		case GET_SCHEDULE:
 			return {
 				...state,
@@ -165,6 +172,11 @@ export default (state, action) => {
 				...state,
 				notification: action.payload,
 				loading: false,
+			};
+		case GET_AVAILABLE_DATES:
+			return {
+				...state,
+				availableDates: action.payload,
 			};
 		default:
 			return state;
