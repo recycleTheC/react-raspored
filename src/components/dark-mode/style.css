@@ -10043,7 +10043,8 @@ h3 {
 [data-theme=dark] .navbar-toggler-icon {
   filter: invert(1);
 }
-[data-theme=dark] textarea {
+[data-theme=dark] textarea,
+[data-theme=dark] input {
   color: #272b30 !important;
 }
 

@@ -54,7 +54,8 @@ $gray-800: #3a3f44;
 		filter: invert(1);
 	}
 
-	textarea {
+	textarea,
+	input {
 		color: $dark !important;
 	}
 }
