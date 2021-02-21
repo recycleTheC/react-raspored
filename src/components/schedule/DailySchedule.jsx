@@ -367,20 +367,50 @@ function DailySchedule({ date }) {
 																{item.notes.map((note) => (
 																	<li key={uuid()}>
 																		{!note.reminder ? (
-																			<small>
-																				<ReactMarkdown
-																					source={note.text}
-																					renderers={{
-																						paragraph: (props) => {
-																							return (
-																								<p className='mb-1' style={{}}>
-																									{props.children}
-																								</p>
-																							);
-																						},
-																					}}
-																				/>
-																			</small>
+																			!note.highlight ? (
+																				<small>
+																					<ReactMarkdown
+																						source={note.text}
+																						renderers={{
+																							paragraph: (props) => {
+																								return (
+																									<p
+																										className='mb-1'
+																										style={{}}
+																									>
+																										{props.children}
+																									</p>
+																								);
+																							},
+																						}}
+																					/>
+																				</small>
+																			) : (
+																				<>
+																					<Badge pill variant='light'>
+																						{note.title
+																							? note.title
+																							: 'Zadatak'}{' '}
+																					</Badge>
+																					<small>
+																						<ReactMarkdown
+																							source={note.text}
+																							renderers={{
+																								paragraph: (props) => {
+																									return (
+																										<p
+																											className='mb-1'
+																											style={{}}
+																										>
+																											{props.children}
+																										</p>
+																									);
+																								},
+																							}}
+																						/>
+																					</small>
+																				</>
+																			)
 																		) : (
 																			<OverlayTrigger
 																				placement='bottom'

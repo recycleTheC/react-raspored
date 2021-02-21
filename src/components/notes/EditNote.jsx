@@ -146,23 +146,12 @@ function EditNote({ show, close, date }) {
 							})}
 						</Form.Control>
 					</Form.Group>
-					<Form.Group controlId='textArea'>
-						<Form.Label>
-							Bilješka {errors.note && <small>({errors.note.message})</small>}
-						</Form.Label>
-						<Form.Control
-							as='textarea'
-							rows='4'
-							name='note'
-							ref={register({ required: 'Obavezno' })}
-						/>
-					</Form.Group>
 
 					<Form.Group>
 						<Form.Check
 							type='checkbox'
 							name='toRemind'
-							label='Obveza za slijedeći sat?'
+							label='Obaveza za slijedeći sat?'
 							ref={register()}
 							style={{ margin: '1em 0 1em 0' }}
 						/>
@@ -175,7 +164,21 @@ function EditNote({ show, close, date }) {
 							</Form.Label>
 							<Form.Control name='title' ref={register()} />
 						</Form.Group>
+					</div>
 
+					<Form.Group controlId='textArea'>
+						<Form.Label>
+							Bilješka {errors.note && <small>({errors.note.message})</small>}
+						</Form.Label>
+						<Form.Control
+							as='textarea'
+							rows='4'
+							name='note'
+							ref={register({ required: 'Obavezno' })}
+						/>
+					</Form.Group>
+
+					<div style={{ display: !toRemind && 'none' }}>
 						<Form.Group>
 							<Form.Check
 								type='checkbox'

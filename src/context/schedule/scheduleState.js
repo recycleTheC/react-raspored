@@ -164,6 +164,8 @@ const ScheduleState = (props) => {
 						if (!item.reminder) {
 							current.notes.push(insert);
 						} else if (isSameDay(new Date(item.date), state.date)) {
+							insert.highlight = true;
+							insert.title = item.title;
 							current.notes.push(insert);
 						}
 					});
