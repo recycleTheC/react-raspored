@@ -148,7 +148,7 @@ export default (state, action) => {
 		case GET_ALL_EXAMS:
 			return {
 				...state,
-				exams: action.payload,
+				allExams: action.payload,
 				loading: false,
 			};
 		case GET_NOTIFICATION:

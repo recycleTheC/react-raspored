@@ -16,7 +16,8 @@ export const Calendar = () => {
 	const [value, setValue] = useState(new Date());
 
 	const context = useContext(ScheduleContext);
-	const { exams, getAllExams } = context;
+	const getAllExams = context.getAllExams;
+	const exams = context.allExams;
 
 	useEffect(() => {
 		setCalendar(buildCalendar(value));

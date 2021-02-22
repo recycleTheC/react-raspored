@@ -47,6 +47,7 @@ const ScheduleState = (props) => {
 		notes: [],
 		status: {},
 		exams: [],
+		allExams: [],
 		changes: [],
 		rawSchedule: [],
 		classes: [],
@@ -860,6 +861,7 @@ const ScheduleState = (props) => {
 				notifications: state.notifications,
 				dailyNotifications: state.dailyNotifications,
 				availableDates: state.availableDates,
+				allExams: state.allExams,
 
 				getSchedule,
 				setLoading,
