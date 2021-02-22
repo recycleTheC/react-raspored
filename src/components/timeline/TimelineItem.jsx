@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { format, getWeek, parseISO } from 'date-fns';
 import locale from 'date-fns/locale/hr';
 
-export const TimelineItem = ({ date, classId, text, type }) => {
+export const TimelineItem = ({ date, classId, text, type, title }) => {
 	const day = parseISO(date);
 	const week = getWeek(day) % 2 === 0 ? 'parni-tjedan' : 'neparni-tjedan';
 
@@ -20,6 +20,7 @@ export const TimelineItem = ({ date, classId, text, type }) => {
 					</small>
 				</div>
 				<div className='timeline-item-text'>
+					{title && <ReactMarkdown source={title} />}
 					<ReactMarkdown source={text} />
 				</div>
 				<span className='circle'></span>
@@ -33,6 +34,7 @@ TimelineItem.propTypes = {
 	classId: PropTypes.number,
 	text: PropTypes.string,
 	type: PropTypes.string,
+	title: PropTypes.string,
 };
 
 export default TimelineItem;

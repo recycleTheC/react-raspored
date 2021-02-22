@@ -79,6 +79,7 @@ export const Timeline = () => {
 			key: note._id,
 			date: note.date,
 			text: note.note,
+			title: note.title,
 			classId: note.classId,
 			type: 'note',
 		});
@@ -138,6 +139,7 @@ export const Timeline = () => {
 								key={item._id}
 								date={item.date}
 								text={item.text}
+								title={item.title}
 								classId={item.classId}
 								type={item.type}
 							/>
