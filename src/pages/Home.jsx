@@ -15,11 +15,7 @@ import Holidays from '../components/decorations/Holidays';
 export default function Home() {
 	const context = useContext(ScheduleContext);
 	const { loading, schedule, setGlobalDate } = context;
-	const [date, setDate] = useState(new Date());
-
-	// useEffect(() => {
-	// 	getSchedule(date);
-	// }, [date]);
+	const [date, setDate] = useState(context.date);
 
 	useEffect(() => {
 		setGlobalDate(date);

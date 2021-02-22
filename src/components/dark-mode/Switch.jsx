@@ -4,17 +4,14 @@ import { Form } from 'react-bootstrap';
 export const Switch = () => {
 	const [cheched, setCheched] = useState(false);
 
-	window
-		.matchMedia('(prefers-color-scheme: dark)')
-		.addEventListener('change', (e) => e.matches && setCheched(true));
-
 	useEffect(() => {
-		if (
-			window.matchMedia('(prefers-color-scheme: dark)').matches ||
-			localStorage.theme === 'dark'
-		) {
+		if (localStorage.theme) {
+			if (localStorage.theme === 'dark') {
+				document.body.setAttribute('data-theme', 'dark');
+				setCheched(true);
+			}
+		} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
 			document.body.setAttribute('data-theme', 'dark');
-			localStorage.setItem('theme', 'dark');
 			setCheched(true);
 		}
 	}, []);
