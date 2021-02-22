@@ -10047,6 +10047,12 @@ h3 {
 [data-theme=dark] input {
   color: #272b30 !important;
 }
+[data-theme=dark] .react-datepicker__header {
+  background-color: #272b30 !important;
+}
+[data-theme=dark] .react-datepicker__month-container {
+  background-color: #3a3f44;
+}
 
 #theme-switch:checked ~ .custom-control-label::before {
   background-color: #3a3f44;
