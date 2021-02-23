@@ -8,7 +8,7 @@ import { BoxArrowRight } from 'react-bootstrap-icons';
 
 import AuthContext from '../../context/auth/authContext';
 import PropTypes from 'prop-types';
-import { Switch } from '../dark-mode/Switch';
+import { Switch } from '../styles/Switch';
 
 export default function Layout({ children }) {
 	const authContext = useContext(AuthContext);
