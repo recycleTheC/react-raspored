@@ -105,24 +105,35 @@ const ScheduleState = (props) => {
 
 				for (let j = 0; j < classes.length; j++) {
 					let current = { ...classes[j] };
-					current.changed = false;
 
-					for (let k = 0; k < state.changes.length; k++) {
+					// current.changed = false; hopefully this helps
+					const changes = state.changes.filter((row) => row.classId === id);
+
+					for (let k = 0; k < changes.length; k++) {
 						if (
-							state.changes[k].changed &&
-							state.changes[k].changed._id === current._id &&
-							state.changes[k].classId === id
+							(changes[k].changed && changes[k].changed._id === current._id) ||
+							(current.regular && changes[k].changed._id === current.regular.id)
 						) {
 							const regularId = current._id;
 							const regularName = current.name;
-							current = { ...state.changes[k].substitution };
-							current.changed = true;
-							current.regular = { id: regularId, name: regularName };
+
+							if (k === 0) {
+								current = { ...changes[k].substitution };
+								current.changed = true;
+								current.regular = { id: regularId, name: regularName };
+							} else {
+								const index = classes.push(changes[k].substitution) - 1;
+								classes[index].changed = true;
+								classes[index].regular = {
+									id: regularId,
+									name: regularName,
+								};
+							}
 						}
 
-						if (state.changes[k].classId === id && state.changes[k].location) {
-							if (state.changes[k].location !== location) {
-								location = state.changes[k].location;
+						if (changes[k].location) {
+							if (changes[k].location !== location) {
+								location = changes[k].location;
 								locationChanged = true;
 							}
 						}
