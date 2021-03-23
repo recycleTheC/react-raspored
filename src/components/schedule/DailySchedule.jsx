@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ScheduleContext from '../../context/schedule/scheduleContext';
 import AuthContext from '../../context/auth/authContext';
@@ -14,10 +14,11 @@ import {
 	Popover,
 	OverlayTrigger,
 } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import ReactMarkdown from 'react-markdown';
 import { ExclamationTriangle } from 'react-bootstrap-icons';
-import { format } from 'date-fns';
+import { format, differenceInMinutes } from 'date-fns';
 import locale from 'date-fns/locale/hr';
 
 import EditNote from '../notes/EditNote';
@@ -25,8 +26,6 @@ import EditExam from '../exams/EditExam';
 import EditChanges from '../changes/EditChanges';
 
 import './style.css';
-import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
 
 function DailySchedule({ date }) {
 	const scheduleContext = useContext(ScheduleContext);
@@ -238,6 +237,17 @@ function DailySchedule({ date }) {
 		setCurrentStr(hour + ':' + minute);
 	}, [currentTime]);
 
+	const getUntil = (startTime) => {
+		const [startH, startMin] = startTime.split(':');
+		const start = new Date().setHours(startH, startMin);
+		const diff = differenceInMinutes(currentTime, start);
+
+		if (diff <= -15 || diff >= 0) return false;
+		return `${Math.abs(diff)} ${
+			Math.abs(diff) === 1 ? 'minutu' : Math.abs(diff) < 5 ? 'minute' : 'minuta'
+		}`;
+	};
+
 	return (
 		<ListGroup variant='flush' className='mt-2 mb-3'>
 			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
@@ -257,6 +267,8 @@ function DailySchedule({ date }) {
 
 				const isCurrent =
 					currentTimeString >= timeStart && currentTimeString <= timeEnd;
+
+				const timeUntil = isCurrent ? false : getUntil(timeStart);
 
 				return (
 					<ListGroup.Item key={row.scheduleId}>
@@ -285,16 +297,20 @@ function DailySchedule({ date }) {
 												/>
 											)}
 										</Badge>
-									)}
+									)}{' '}
 									{classes.map((x) => x.changed).includes(true) && (
 										<Badge pill variant='danger'>
 											izmjena
 										</Badge>
-									)}
+									)}{' '}
 									{isToday && isCurrent && (
 										<Badge variant='danger' className='pulser'>
-											{/* <StarFill color='yellow' /> */}
 											LIVE
+										</Badge>
+									)}{' '}
+									{isToday && timeUntil && (
+										<Badge pill variant='warning'>
+											za {timeUntil}
 										</Badge>
 									)}
 								</div>
