@@ -266,7 +266,7 @@ function DailySchedule({ date }) {
 				} = row;
 
 				const isCurrent =
-					currentTimeString >= timeStart && currentTimeString <= timeEnd;
+					currentTimeString >= timeStart && currentTimeString < timeEnd;
 
 				const timeUntil = isCurrent ? false : getUntil(timeStart);
 
