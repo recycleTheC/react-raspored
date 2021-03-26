@@ -105,8 +105,6 @@ const ScheduleState = (props) => {
 
 				for (let j = 0; j < classes.length; j++) {
 					let current = { ...classes[j] };
-
-					// current.changed = false; hopefully this helps
 					const changes = state.changes.filter((row) => row.classId === id);
 
 					for (let k = 0; k < changes.length; k++) {
@@ -139,56 +137,7 @@ const ScheduleState = (props) => {
 						}
 					}
 
-					let classKey = current._id;
-					current.notes = [];
-					current.exams = [];
-
-					let classNotes = state.notes.filter(
-						(note) =>
-							note.classKey === classKey && note.classId === id && !note.hidden
-					);
-
-					for (let n = 0; n < state.notes.length; n++) {
-						if (
-							state.notes[n].classKey === classKey &&
-							state.notes[n].reminder &&
-							!state.notes[n].reminded
-						) {
-							let insert = {
-								text: state.notes[n].note,
-							};
-
-							if (isSameDay(new Date(state.notes[n].reminder), state.date)) {
-								if (state.notes[n].reminder)
-									insert.reminder = state.notes[n].date;
-								if (state.notes[n].title) insert.title = state.notes[n].title;
-								current.notes.push(insert);
-								state.notes[n].reminded = true;
-							}
-						}
-					}
-
-					classNotes.forEach((item) => {
-						let insert = {
-							text: item.note,
-						};
-
-						if (!item.reminder) {
-							current.notes.push(insert);
-						} else if (isSameDay(new Date(item.date), state.date)) {
-							insert.highlight = true;
-							insert.title = item.title;
-							current.notes.push(insert);
-						}
-					});
-
-					let classExams = state.exams.filter(
-						(exam) => exam.classKey._id === classKey && exam.classId === id
-					);
-
-					classExams.forEach((item) => {
-						current.exams.push(item.content);
-					});
+					prepareClassData(current, id);
 
 					classes[j] = { ...current };
 				}
@@ -203,7 +152,24 @@ const ScheduleState = (props) => {
 				};
 
 				locationChanged && (data.locationChanged = locationChanged);
+				scheduleItems.push(data);
+			}
 
+			const additional = state.changes.filter(
+				(row) => row.classId > scheduleItems.length
+			);
+
+			for (let a = 0; a < additional.length; a++) {
+				let data = {
+					id: additional[a].classId,
+					location: additional[a].location || '-',
+					timeStart: additional[a].timeStart || '-',
+					timeEnd: additional[a].timeEnd || '-',
+					classes: [],
+				};
+				prepareClassData(additional[a].substitution, additional[a].classId);
+				additional[a].substitution.changed = true;
+				data.classes.push(additional[a].substitution);
 				scheduleItems.push(data);
 			}
 		} else {
@@ -213,6 +179,58 @@ const ScheduleState = (props) => {
 		dispatch({
 			type: GET_SCHEDULE,
 			payload: scheduleItems,
+		});
+	};
+
+	const prepareClassData = (current, id) => {
+		let classKey = current._id;
+		current.notes = [];
+		current.exams = [];
+
+		let classNotes = state.notes.filter(
+			(note) =>
+				note.classKey === classKey && note.classId === id && !note.hidden
+		);
+
+		for (let n = 0; n < state.notes.length; n++) {
+			if (
+				state.notes[n].classKey === classKey &&
+				state.notes[n].reminder &&
+				!state.notes[n].reminded
+			) {
+				let insert = {
+					text: state.notes[n].note,
+				};
+
+				if (isSameDay(new Date(state.notes[n].reminder), state.date)) {
+					if (state.notes[n].reminder) insert.reminder = state.notes[n].date;
+					if (state.notes[n].title) insert.title = state.notes[n].title;
+					current.notes.push(insert);
+					state.notes[n].reminded = true;
+				}
+			}
+		}
+
+		classNotes.forEach((item) => {
+			let insert = {
+				text: item.note,
+			};
+
+			if (!item.reminder) {
+				current.notes.push(insert);
+			} else if (isSameDay(new Date(item.date), state.date)) {
+				insert.highlight = true;
+				insert.title = item.title;
+				current.notes.push(insert);
+			}
+		});
+
+		let classExams = state.exams.filter(
+			(exam) => exam.classKey._id === classKey && exam.classId === id
+		);
+
+		classExams.forEach((item) => {
+			current.exams.push(item.content);
 		});
 	};
 
