@@ -67,6 +67,9 @@ $gray-800: #3a3f44;
 	.popover {
 		background-color: $gray-700;
 	}
+	.badge a {
+		background-color: unset !important;
+	}
 }
 
 [data-theme='dark'] {

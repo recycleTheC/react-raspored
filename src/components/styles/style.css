@@ -10056,6 +10056,9 @@ h3 {
 [data-theme=dark] .popover {
   background-color: #495057;
 }
+[data-theme=dark] .badge a {
+  background-color: unset !important;
+}
 
 #theme-switch:checked ~ .custom-control-label::before {
   background-color: #3a3f44;
