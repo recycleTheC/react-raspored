@@ -242,7 +242,7 @@ function DailySchedule({ date }) {
 		const start = new Date().setHours(startH, startMin);
 		const diff = differenceInMinutes(currentTime, start);
 
-		if (diff <= -15 || diff >= 0) return false;
+		if (diff < -15 || diff >= 0) return false;
 		return `${Math.abs(diff)} ${
 			Math.abs(diff) === 1 ? 'minutu' : Math.abs(diff) < 5 ? 'minute' : 'minuta'
 		}`;
