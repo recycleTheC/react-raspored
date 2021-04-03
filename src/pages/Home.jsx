@@ -86,7 +86,7 @@ export default function Home() {
 					</Column>
 				)}
 			</>
-			{loading ? spinner : !schedule.msg && <DailySchedule date={date} />}
+			{loading ? spinner : <DailySchedule date={date} />}
 			{schedule.options && schedule.options == 'xmas' && (
 				<Holidays date={date} />
 			)}
