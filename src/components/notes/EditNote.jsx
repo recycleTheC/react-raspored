@@ -29,8 +29,8 @@ function EditNote({ show, close, date }) {
 
 		const send = {
 			date: format(date, 'yyyy-MM-dd'),
-			classKey: values._class.split(':')[0],
-			classId: values._class.split(':')[1],
+			classKey: values.selectedClass.split(':')[0],
+			classId: values.selectedClass.split(':')[1],
 			note: values.note,
 		};
 
@@ -50,14 +50,14 @@ function EditNote({ show, close, date }) {
 		close({ target: { name: 'notes' } });
 	};
 
-	const { noteId, toRemind, _class } = watch();
+	const { noteId, toRemind, selectedClass } = watch();
 
 	useEffect(() => {
 		if (noteId !== '0' && noteId !== undefined) {
 			const selected = notes.find((note) => note._id === noteId);
 
 			setValue('note', selected.note);
-			setValue('_class', selected.classKey + ':' + selected.classId);
+			setValue('selectedClass', selected.classKey + ':' + selected.classId);
 			setValue('hidden', selected.hidden);
 
 			if (selected.reminder) {
@@ -75,14 +75,16 @@ function EditNote({ show, close, date }) {
 			setValue('toRemind', false);
 			setValue('hidden', false);
 		}
-		// eslint-disable-next-line
 	}, [noteId]);
 
 	useEffect(() => {
 		if (toRemind) {
-			getAvailableDates(_class.split(':')[0], format(date, 'yyyy-MM-dd'));
+			getAvailableDates(
+				selectedClass.split(':')[0],
+				format(date, 'yyyy-MM-dd')
+			);
 		}
-	}, [toRemind, _class]);
+	}, [toRemind, selectedClass]);
 
 	useEffect(() => {
 		if (availableDates.length > 0 && noteId === '0') {
@@ -132,7 +134,7 @@ function EditNote({ show, close, date }) {
 						</Form.Label>
 						<Form.Control
 							as='select'
-							name='_class'
+							name='selectedClass'
 							ref={register({ required: 'Obavezno' })}
 						>
 							{schedule.map((x) => {
