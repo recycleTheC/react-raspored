@@ -78,7 +78,7 @@ export const EditNotification = ({ match }) => {
 						<DatePick date={fromDate} setDate={setFromDate} />
 						<br />
 						<strong>Datum kraja: </strong>
-						<DatePick date={toDate} setDate={setToDate} />
+						<DatePick date={toDate} setDate={setToDate} weekends={true} />
 					</Form.Group>
 
 					<Button variant='success' onClick={handleSubmit(onSubmit)}>
