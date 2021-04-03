@@ -248,166 +248,147 @@ function DailySchedule({ date }) {
 		}`;
 	};
 
-	return (
-		<ListGroup variant='flush' className='mt-2 mb-3'>
-			{!loading && authContext.isAuthenticated && schedule.length > 0 && edit}
-			{dailyNotifications.length > 0 && notificationAlert}
-			{changes.length > 0 && changesAlert}
-			{exams.length > 0 && examList}
+	if (schedule.length > 0)
+		return (
+			<ListGroup variant='flush' className='mt-2 mb-3'>
+				{!loading && authContext.isAuthenticated && edit}
+				{dailyNotifications.length > 0 && notificationAlert}
+				{changes.length > 0 && changesAlert}
+				{exams.length > 0 && examList}
 
-			{schedule.map((row) => {
-				const {
-					location,
-					locationChanged,
-					id,
-					timeStart,
-					timeEnd,
-					classes,
-				} = row;
+				{schedule.map((row) => {
+					const {
+						location,
+						locationChanged,
+						id,
+						timeStart,
+						timeEnd,
+						classes,
+					} = row;
 
-				const isCurrent =
-					currentTimeString >= timeStart && currentTimeString < timeEnd;
+					const isCurrent =
+						currentTimeString >= timeStart && currentTimeString < timeEnd;
 
-				const timeUntil = isCurrent ? false : getUntil(timeStart);
+					const timeUntil = isCurrent ? false : getUntil(timeStart);
 
-				return (
-					<ListGroup.Item key={row.scheduleId}>
-						<Row>
-							<Col className='main'>
-								<div className='mb-2'>
-									<Badge pill variant='primary'>
-										{id}. sat
-									</Badge>{' '}
-									{id < 1 && (
-										<Badge pill variant='warning'>
-											predsat
-										</Badge>
-									)}{' '}
-									<Badge pill variant='success'>
-										{timeStart} - {timeEnd}
-									</Badge>{' '}
-									{location !== '-' && (
-										<Badge pill variant='light'>
-											lokacija: {location}{' '}
-											{locationChanged && (
-												<ExclamationTriangle
-													color='red'
-													size='0.8rem'
-													style={{ marginBottom: '0.125em' }}
-												/>
-											)}
-										</Badge>
-									)}{' '}
-									{classes.map((x) => x.changed).includes(true) && (
-										<Badge pill variant='danger'>
-											izmjena
-										</Badge>
-									)}{' '}
-									{isToday && isCurrent && (
-										<Badge variant='danger' className='pulser'>
-											LIVE
-										</Badge>
-									)}{' '}
-									{isToday && timeUntil && (
-										<Badge pill variant='warning'>
-											za {timeUntil}
-										</Badge>
-									)}
-								</div>
-								<Row>
-									{classes.map((item, index) => {
-										const factor = 12 / row.classes.length;
-										const border = index > 0 ? 'between' : '';
-										const size = item.notes.length === 0 ? 12 : 6;
+					return (
+						<ListGroup.Item key={row.scheduleId}>
+							<Row>
+								<Col className='main'>
+									<div className='mb-2'>
+										<Badge pill variant='primary'>
+											{id}. sat
+										</Badge>{' '}
+										{id < 1 && (
+											<Badge pill variant='warning'>
+												predsat
+											</Badge>
+										)}{' '}
+										<Badge pill variant='success'>
+											{timeStart} - {timeEnd}
+										</Badge>{' '}
+										{location !== '-' && (
+											<Badge pill variant='light'>
+												lokacija: {location}{' '}
+												{locationChanged && (
+													<ExclamationTriangle
+														color='red'
+														size='0.8rem'
+														style={{ marginBottom: '0.125em' }}
+													/>
+												)}
+											</Badge>
+										)}{' '}
+										{classes.map((x) => x.changed).includes(true) && (
+											<Badge pill variant='danger'>
+												izmjena
+											</Badge>
+										)}{' '}
+										{isToday && isCurrent && (
+											<Badge variant='danger' className='pulser'>
+												LIVE
+											</Badge>
+										)}{' '}
+										{isToday && timeUntil && (
+											<Badge pill variant='warning'>
+												za {timeUntil}
+											</Badge>
+										)}
+									</div>
+									<Row>
+										{classes.map((item, index) => {
+											const factor = 12 / row.classes.length;
+											const border = index > 0 ? 'between' : '';
+											const size = item.notes.length === 0 ? 12 : 6;
 
-										return (
-											<Col
-												key={item._id}
-												className={`px-0 col-${factor} col-sm`}
-											>
-												<Row className={`mx-0 ${border}`}>
-													<Col
-														md={size}
-														lg={size}
-														xl={size}
-														key={item._id}
-														className='mb-2'
-													>
-														<h4>
-															{item.name}{' '}
-															{item.changed && (
-																<ExclamationTriangle
-																	color='red'
-																	size='0.8rem'
-																	style={{ marginBottom: '0.125em' }}
-																/>
-															)}
-														</h4>
-														<small>
-															{item.teacher &&
-																item.teacher
-																	.map((t) => t.name)
-																	.reduce((prev, curr) => [prev, ' / ', curr])}
-														</small>{' '}
-														{item.type && (
-															<Badge pill variant='info'>
-																{item.type} smjer
-															</Badge>
-														)}
-														{item.exams.length > 0 && (
-															<div className='mt-2'>
-																<Badge pill variant='danger'>
-																	Pisana provjera
-																</Badge>{' '}
-																<small>
-																	{item.exams
-																		.map((exam) => (
-																			<strong key={uuid()}>{exam}</strong>
-																		))
+											return (
+												<Col
+													key={item._id}
+													className={`px-0 col-${factor} col-sm`}
+												>
+													<Row className={`mx-0 ${border}`}>
+														<Col
+															md={size}
+															lg={size}
+															xl={size}
+															key={item._id}
+															className='mb-2'
+														>
+															<h4>
+																{item.name}{' '}
+																{item.changed && (
+																	<ExclamationTriangle
+																		color='red'
+																		size='0.8rem'
+																		style={{ marginBottom: '0.125em' }}
+																	/>
+																)}
+															</h4>
+															<small>
+																{item.teacher &&
+																	item.teacher
+																		.map((t) => t.name)
 																		.reduce((prev, curr) => [
 																			prev,
 																			' / ',
 																			curr,
 																		])}
-																</small>
-															</div>
-														)}
-													</Col>
+															</small>{' '}
+															{item.type && (
+																<Badge pill variant='info'>
+																	{item.type} smjer
+																</Badge>
+															)}
+															{item.exams.length > 0 && (
+																<div className='mt-2'>
+																	<Badge pill variant='danger'>
+																		Pisana provjera
+																	</Badge>{' '}
+																	<small>
+																		{item.exams
+																			.map((exam) => (
+																				<strong key={uuid()}>{exam}</strong>
+																			))
+																			.reduce((prev, curr) => [
+																				prev,
+																				' / ',
+																				curr,
+																			])}
+																	</small>
+																</div>
+															)}
+														</Col>
 
-													{item.notes.length > 0 && (
-														<Col md={size} lg={size} xl={size}>
-															<Badge pill variant='light'>
-																Bilješke
-															</Badge>
-															<ul className='pl-4'>
-																{item.notes.map((note) => (
-																	<li key={uuid()}>
-																		{!note.reminder ? (
-																			!note.highlight ? (
-																				<small>
-																					<ReactMarkdown
-																						source={note.text}
-																						renderers={{
-																							paragraph: (props) => {
-																								return (
-																									<p
-																										className='mb-1'
-																										style={{}}
-																									>
-																										{props.children}
-																									</p>
-																								);
-																							},
-																						}}
-																					/>
-																				</small>
-																			) : (
-																				<>
-																					<Badge pill variant='light'>
-																						{note.title
-																							? note.title
-																							: 'Zadatak'}{' '}
-																					</Badge>
+														{item.notes.length > 0 && (
+															<Col md={size} lg={size} xl={size}>
+																<Badge pill variant='light'>
+																	Bilješke
+																</Badge>
+																<ul className='pl-4'>
+																	{item.notes.map((note) => (
+																		<li key={uuid()}>
+																			{!note.reminder ? (
+																				!note.highlight ? (
 																					<small>
 																						<ReactMarkdown
 																							source={note.text}
@@ -425,15 +406,14 @@ function DailySchedule({ date }) {
 																							}}
 																						/>
 																					</small>
-																				</>
-																			)
-																		) : (
-																			<OverlayTrigger
-																				placement='bottom'
-																				delay={{ show: 250, hide: 500 }}
-																				overlay={
-																					<Popover>
-																						<Popover.Content>
+																				) : (
+																					<>
+																						<Badge pill variant='light'>
+																							{note.title
+																								? note.title
+																								: 'Zadatak'}{' '}
+																						</Badge>
+																						<small>
 																							<ReactMarkdown
 																								source={note.text}
 																								renderers={{
@@ -449,63 +429,97 @@ function DailySchedule({ date }) {
 																									},
 																								}}
 																							/>
-																						</Popover.Content>
-																					</Popover>
-																				}
-																			>
-																				<Badge pill variant='secondary'>
-																					{note.title ? note.title : 'Zadatak'}{' '}
-																					(
-																					{format(
-																						new Date(note.reminder),
-																						'dd.MM.yyyy',
-																						{
-																							locale,
-																						}
-																					)}
-																					)
-																				</Badge>
-																			</OverlayTrigger>
-																		)}
-																	</li>
-																))}
-															</ul>
-														</Col>
-													)}
-												</Row>
-											</Col>
-										);
-									})}
-								</Row>
-							</Col>
-						</Row>
-					</ListGroup.Item>
-				);
-			})}
-			{!loading && (
-				<>
-					<EditNote
-						show={showModal.notes}
-						name='notes'
-						close={toggleModal}
-						date={date}
-					/>
-					<EditExam
-						show={showModal.exams}
-						name='exams'
-						close={toggleModal}
-						date={date}
-					/>
-					<EditChanges
-						show={showModal.changes}
-						name='changes'
-						close={toggleModal}
-						date={date}
-					/>
-				</>
-			)}
-		</ListGroup>
-	);
+																						</small>
+																					</>
+																				)
+																			) : (
+																				<OverlayTrigger
+																					placement='bottom'
+																					delay={{ show: 250, hide: 500 }}
+																					overlay={
+																						<Popover>
+																							<Popover.Content>
+																								<ReactMarkdown
+																									source={note.text}
+																									renderers={{
+																										paragraph: (props) => {
+																											return (
+																												<p
+																													className='mb-1'
+																													style={{}}
+																												>
+																													{props.children}
+																												</p>
+																											);
+																										},
+																									}}
+																								/>
+																							</Popover.Content>
+																						</Popover>
+																					}
+																				>
+																					<Badge pill variant='secondary'>
+																						{note.title
+																							? note.title
+																							: 'Zadatak'}{' '}
+																						(
+																						{format(
+																							new Date(note.reminder),
+																							'dd.MM.yyyy',
+																							{
+																								locale,
+																							}
+																						)}
+																						)
+																					</Badge>
+																				</OverlayTrigger>
+																			)}
+																		</li>
+																	))}
+																</ul>
+															</Col>
+														)}
+													</Row>
+												</Col>
+											);
+										})}
+									</Row>
+								</Col>
+							</Row>
+						</ListGroup.Item>
+					);
+				})}
+				{!loading && (
+					<>
+						<EditNote
+							show={showModal.notes}
+							name='notes'
+							close={toggleModal}
+							date={date}
+						/>
+						<EditExam
+							show={showModal.exams}
+							name='exams'
+							close={toggleModal}
+							date={date}
+						/>
+						<EditChanges
+							show={showModal.changes}
+							name='changes'
+							close={toggleModal}
+							date={date}
+						/>
+					</>
+				)}
+			</ListGroup>
+		);
+	else if (dailyNotifications.length > 0)
+		return (
+			<ListGroup variant='flush' className='mt-2 mb-3'>
+				{notificationAlert}
+			</ListGroup>
+		);
+	else return null;
 }
 
 DailySchedule.propTypes = {
