@@ -9,6 +9,7 @@ import { BoxArrowRight } from 'react-bootstrap-icons';
 import AuthContext from '../../context/auth/authContext';
 import PropTypes from 'prop-types';
 import { Switch } from '../styles/Switch';
+import { version } from '../../../package.json';
 
 export default function Layout({ children }) {
 	const authContext = useContext(AuthContext);
@@ -103,7 +104,7 @@ export default function Layout({ children }) {
 				<Container>
 					<Row className='py-1'>
 						<Col md={(4, { order: 'first' })} xs='12'>
-							<small>&copy; Mario Kopjar 2021.</small>
+							<small>&copy; Mario Kopjar 2021. (verzija: {version})</small>
 						</Col>
 						<Col md={4} xs={(12, { order: 'last' })}>
 							<small style={{ display: 'inline-block' }}>
