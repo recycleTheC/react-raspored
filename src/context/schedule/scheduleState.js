@@ -565,6 +565,10 @@ const ScheduleState = (props) => {
 			if (values.substitution) send.substitution = values.substitution;
 		}
 
+		if (values.new) {
+			if (values.substitution) send.substitution = values.substitution;
+		}
+
 		if (values.location) send.location = values.location;
 
 		const options = {
@@ -619,6 +623,10 @@ const ScheduleState = (props) => {
 		}
 
 		if (values.location) send.location = values.location;
+
+		if (values.new) {
+			if (values.substitution) send.substitution = values.substitution;
+		}
 
 		const options = {
 			headers: {
