@@ -28,6 +28,10 @@ function EditChanges({ show, close, date }) {
 	}
 
 	const onSubmit = (values) => {
+		if (values.classId.includes('+')) {
+			values.new = true;
+			values.classId = values.classId.replace('+', '');
+		}
 		if (changeId === '0') {
 			createChange(date, values);
 		} else {
@@ -43,9 +47,9 @@ function EditChanges({ show, close, date }) {
 			const selected = changes.find((change) => change._id === changeId);
 			if (selected) {
 				setValue('classId', selected.classId);
-				if (selected.changed) {
+				if (selected.changed || selected.substitution) {
 					setValue('changeClass', true);
-					setValue('changed', selected.changed);
+					if (selected.changed) setValue('changed', selected.changed);
 					setValue('substitution', selected.substitution._id);
 				} else {
 					setValue('changeClass', false);
@@ -105,12 +109,25 @@ function EditChanges({ show, close, date }) {
 							ref={register({ required: 'Obavezno' })}
 							disabled={changeId !== '0'}
 						>
-							{schedule.map((x) => {
-								return (
-									<option key={x.id} value={x.id}>
-										{x.id}. sat
-									</option>
-								);
+							{schedule.map((x, i) => {
+								if (i < schedule.length - 1)
+									return (
+										<option key={x.id} value={x.id}>
+											{x.id}. sat
+										</option>
+									);
+								else {
+									return (
+										<>
+											<option key={x.id} value={x.id}>
+												{x.id}. sat
+											</option>
+											<option key={x.id + 1} value={`+${x.id + 1}`}>
+												{x.id + 1}. sat
+											</option>
+										</>
+									);
+								}
 							})}
 						</Form.Control>
 					</Form.Group>
@@ -134,7 +151,7 @@ function EditChanges({ show, close, date }) {
 							<Form.Control
 								as='select'
 								name='changed'
-								ref={register({ required: 'Obavezno' })}
+								ref={register()}
 								disabled={!changeClass}
 							>
 								{schedule
