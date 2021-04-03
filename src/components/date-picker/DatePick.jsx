@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import 'react-datepicker/dist/react-datepicker.css';
 import './style.css';
 
-const DatePick = ({ date, setDate }) => {
+const DatePick = ({ date, setDate, weekends = false }) => {
 	const filterDays = (date) => {
 		if (date.getDay() === 0 || date.getDay() === 6) {
 			return false;
@@ -20,7 +20,7 @@ const DatePick = ({ date, setDate }) => {
 			onChange={(date) => setDate(date)}
 			customInput={<p>{format(date, 'eeee, dd.MM.yyyy.', { locale })} </p>}
 			locale={locale}
-			filterDate={filterDays}
+			filterDate={weekends ? null : filterDays}
 			popperPlacement='auto'
 		/>
 	);
@@ -29,6 +29,7 @@ const DatePick = ({ date, setDate }) => {
 DatePick.propTypes = {
 	date: PropTypes.objectOf(Date),
 	setDate: PropTypes.func,
+	weekends: PropTypes.bool,
 };
 
 export default DatePick;
