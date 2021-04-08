@@ -13,6 +13,7 @@ const Alerts = () => {
 				position: 'relative',
 				minHeight: '200px',
 				float: 'right',
+				zIndex: '100',
 			}}
 		>
 			<div

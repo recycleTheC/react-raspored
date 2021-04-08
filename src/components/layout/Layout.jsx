@@ -67,6 +67,17 @@ export default function Layout({ children }) {
 		</Nav.Link>
 	);
 
+	const subscribers = (
+		<NavDropdown title='Pretplatnici' id='basic-nav-dropdown-subs'>
+			<NavDropdown.Item as={Link} to='/subscribers/'>
+				Upravljaj pretplatom
+			</NavDropdown.Item>
+			<NavDropdown.Item as={Link} to='/subscribers/register'>
+				Registriraj se
+			</NavDropdown.Item>
+		</NavDropdown>
+	);
+
 	return (
 		<div>
 			<div style={{ minHeight: '96.5vh' }}>
@@ -87,6 +98,7 @@ export default function Layout({ children }) {
 								</Nav.Link>
 								{isAuthenticated && scheduleItems}
 								{isAuthenticated ? notificationAdmin : notificationItem}
+								{subscribers}
 							</Nav>
 						</Navbar.Collapse>
 
