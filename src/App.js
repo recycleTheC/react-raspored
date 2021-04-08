@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import PrivateRoute from './components/routing/PrivateRoute';
+import ContextRoute from './components/routing/ContextRoute';
 import Layout from './components/layout/Layout';
 
 import ScheduleState from './context/schedule/scheduleState';
@@ -59,20 +60,27 @@ function App() {
 									component={EditNotification}
 								/>
 								<Route exact path='/calendar' component={Calendar} />
-								<SubscribersState>
-									<Route
-										exact
-										path='/subscribers/register'
-										component={RegisterSubscriber}
-									/>
-									<Route
-										exact
-										path='/subscribers/'
-										component={RequestSubscriber}
-									/>
-									<Route path='/subscribers/me/:key' component={Subscriber} />
-								</SubscribersState>
-								<Route component={NotFound} />{' '}
+
+								<ContextRoute
+									exact
+									path='/subscribers/register'
+									component={RegisterSubscriber}
+									context={SubscribersState}
+								/>
+								<ContextRoute
+									exact
+									path='/subscribers/'
+									component={RequestSubscriber}
+									context={SubscribersState}
+								/>
+								<ContextRoute
+									exact
+									path='/subscribers/me/:key'
+									component={Subscriber}
+									context={SubscribersState}
+								/>
+
+								<Route component={NotFound} />
 								{/* MUST be at the END of the Switch*/}
 							</Switch>
 						</Layout>
