@@ -36,6 +36,7 @@ import {
 	GET_CLASS_EXAMS,
 	CHANGE_DATE,
 	GET_AVAILABLE_DATES,
+	GET_REMINDERS,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -59,6 +60,7 @@ const ScheduleState = (props) => {
 		dailyNotifications: [],
 		notifications: [],
 		availableDates: [],
+		allReminders: [],
 	};
 
 	const [state, dispatch] = useReducer(ScheduleReducer, initialState);
@@ -276,7 +278,9 @@ const ScheduleState = (props) => {
 
 	const getNotes = async (date) => {
 		try {
-			const res = await axios.get(`/api/notes/${format(date, 'yyyy-MM-dd')}`);
+			const res = await axios.get(
+				`/api/notes/date/${format(date, 'yyyy-MM-dd')}`
+			);
 
 			dispatch({
 				type: GET_NOTES,
@@ -285,6 +289,24 @@ const ScheduleState = (props) => {
 		} catch (err) {
 			dispatch({
 				type: GET_NOTES,
+				payload: [],
+			});
+		}
+	};
+
+	// Get all reminders
+
+	const getReminders = async () => {
+		try {
+			const res = await axios.get('/api/notes/reminders');
+
+			dispatch({
+				type: GET_REMINDERS,
+				payload: res.data.sort(compareNotes),
+			});
+		} catch (err) {
+			dispatch({
+				type: GET_REMINDERS,
 				payload: [],
 			});
 		}
@@ -899,6 +921,7 @@ const ScheduleState = (props) => {
 				dailyNotifications: state.dailyNotifications,
 				availableDates: state.availableDates,
 				allExams: state.allExams,
+				allReminders: state.allReminders,
 
 				getSchedule,
 				setLoading,
@@ -929,6 +952,7 @@ const ScheduleState = (props) => {
 				createNotification,
 				setGlobalDate,
 				getAvailableDates,
+				getReminders,
 			}}
 		>
 			{props.children}

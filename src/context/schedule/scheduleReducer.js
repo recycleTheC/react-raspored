@@ -30,6 +30,7 @@ import {
 	GET_CLASS_EXAMS,
 	CHANGE_DATE,
 	GET_AVAILABLE_DATES,
+	GET_REMINDERS,
 } from '../types';
 
 export default (state, action) => {
@@ -177,6 +178,11 @@ export default (state, action) => {
 			return {
 				...state,
 				availableDates: action.payload,
+			};
+		case GET_REMINDERS:
+			return {
+				...state,
+				allReminders: action.payload,
 			};
 		default:
 			return state;
