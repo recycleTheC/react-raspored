@@ -41,11 +41,8 @@ export default function Layout({ children }) {
 
 	const scheduleItems = (
 		<NavDropdown title='Raspored' id='basic-nav-dropdown'>
-			<NavDropdown.Item as={Link} to='/teacher/add'>
-				Dodaj predavača
-			</NavDropdown.Item>
-			<NavDropdown.Item as={Link} to='/class/add'>
-				Dodaj predmet
+			<NavDropdown.Item as={Link} to='/schedule/basic'>
+				Predavači i predmeti
 			</NavDropdown.Item>
 		</NavDropdown>
 	);

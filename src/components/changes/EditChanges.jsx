@@ -28,9 +28,9 @@ function EditChanges({ show, close, date }) {
 	}
 
 	const onSubmit = (values) => {
-		if (values.classId.includes('+')) {
+		if (classId.includes('+')) {
 			values.new = true;
-			values.classId = values.classId.replace('+', '');
+			values.classId = classId.replace('+', '');
 		}
 		if (changeId === '0') {
 			createChange(date, values);

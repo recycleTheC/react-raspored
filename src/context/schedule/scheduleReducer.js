@@ -31,6 +31,7 @@ import {
 	CHANGE_DATE,
 	GET_AVAILABLE_DATES,
 	GET_REMINDERS,
+	CREATE_CLASS,
 } from '../types';
 
 export default (state, action) => {
@@ -84,13 +85,17 @@ export default (state, action) => {
 		case CREATE_TEACHER:
 			return {
 				...state,
-				teachers: action.payload,
+				teachers: action.payload.response || action.payload || [],
+				status: { msg: action.payload.msg, type: action.payload.type },
 				loading: false,
 			};
 		case GET_CLASSES:
+		case CREATE_CLASS:
 			return {
 				...state,
-				classes: action.payload,
+				classes: action.payload.response || action.payload || [],
+				status: { msg: action.payload.msg, type: action.payload.type },
+				loading: false,
 			};
 
 		case SET_LOADING:

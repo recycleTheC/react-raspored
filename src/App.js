@@ -10,8 +10,7 @@ import AlertState from './context/alert/AlertState';
 import SubscribersState from './context/subscribers/SubscribersState';
 
 import Home from './pages/Home';
-import AddTeacher from './components/teachers/AddTeacher';
-import AddClass from './components/classes/AddClass';
+import TeacherClassForm from './components/teachers_classes/TeacherClassForm';
 import Login from './components/auth/Login';
 import Alerts from './components/layout/Alerts';
 import Timeline from './components/timeline/Timeline';
@@ -42,10 +41,9 @@ function App() {
 								<Route exact path='/' component={Home} />
 								<PrivateRoute
 									exact
-									path='/teacher/add'
-									component={AddTeacher}
+									path='/schedule/basic'
+									component={TeacherClassForm}
 								/>
-								<PrivateRoute exact path='/class/add' component={AddClass} />
 								<Route exact path='/login' component={Login} />
 								<Route exact path='/notes' component={Timeline} />
 								<Route exact path='/notifications' component={Notifications} />

@@ -37,6 +37,7 @@ import {
 	CHANGE_DATE,
 	GET_AVAILABLE_DATES,
 	GET_REMINDERS,
+	CREATE_CLASS,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -246,10 +247,12 @@ const ScheduleState = (props) => {
 		clearSchedule();
 		await setLoading();
 
-		await getExams(state.date);
-		await getNotes(state.date);
-		await getChanges(state.date);
-		await getNotification(state.date);
+		await Promise.all([
+			getExams(),
+			getNotes(),
+			getChanges(),
+			getNotification(),
+		]);
 
 		try {
 			const res = await axios.get(
@@ -276,10 +279,10 @@ const ScheduleState = (props) => {
 
 	// Get notes
 
-	const getNotes = async (date) => {
+	const getNotes = async () => {
 		try {
 			const res = await axios.get(
-				`/api/notes/date/${format(date, 'yyyy-MM-dd')}`
+				`/api/notes/date/${format(state.date, 'yyyy-MM-dd')}`
 			);
 
 			dispatch({
@@ -427,6 +430,7 @@ const ScheduleState = (props) => {
 
 		try {
 			const res = await axios.post('/api/teacher/', { name }, options);
+
 			dispatch({
 				type: CREATE_TEACHER,
 				payload: {
@@ -440,6 +444,40 @@ const ScheduleState = (props) => {
 				type: CREATE_TEACHER,
 				payload: {
 					msg: 'Predavač nije dodan u bazu podataka',
+					type: 'warning',
+					response: error.data,
+				},
+			});
+		}
+	};
+
+	// Create class
+
+	const createClass = async (name, teacher = []) => {
+		setLoading();
+
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			const res = await axios.post('/api/class/', { name, teacher }, options);
+
+			dispatch({
+				type: CREATE_CLASS,
+				payload: {
+					msg: 'Predmet dodan u bazu podataka',
+					type: 'success',
+					response: res.data,
+				},
+			});
+		} catch (error) {
+			dispatch({
+				type: CREATE_CLASS,
+				payload: {
+					msg: 'Predmet nije dodan u bazu podataka',
 					type: 'warning',
 					response: error.data,
 				},
@@ -478,10 +516,10 @@ const ScheduleState = (props) => {
 		}
 	};
 
-	const getExams = async (date) => {
+	const getExams = async () => {
 		try {
 			const res = await axios.get(
-				`/api/exam/date/${format(date, 'yyyy-MM-dd')}`
+				`/api/exam/date/${format(state.date, 'yyyy-MM-dd')}`
 			);
 
 			dispatch({
@@ -548,9 +586,11 @@ const ScheduleState = (props) => {
 		}
 	};
 
-	const getChanges = async (date) => {
+	const getChanges = async () => {
 		try {
-			const res = await axios.get(`/api/changes/${format(date, 'yyyy-MM-dd')}`);
+			const res = await axios.get(
+				`/api/changes/${format(state.date, 'yyyy-MM-dd')}`
+			);
 
 			const compare = (a, b) => {
 				if (a.classId < b.classId) {
@@ -752,10 +792,10 @@ const ScheduleState = (props) => {
 		});
 	};
 
-	const getNotification = async (date) => {
+	const getNotification = async () => {
 		try {
 			const res = await axios.get(
-				`/api/notifications/day/${format(date, 'yyyy-MM-dd')}`
+				`/api/notifications/day/${format(state.date, 'yyyy-MM-dd')}`
 			);
 
 			dispatch({
@@ -931,6 +971,7 @@ const ScheduleState = (props) => {
 				deleteNote,
 				updateNotes,
 				createTeacher,
+				createClass,
 				createExam,
 				deleteExam,
 				updateExam,
