@@ -44,6 +44,9 @@ export default function Layout({ children }) {
 			<NavDropdown.Item as={Link} to='/schedule/basic'>
 				Predavači i predmeti
 			</NavDropdown.Item>
+			<NavDropdown.Item as={Link} to='/schedule/create'>
+				Uređivanje rasporeda
+			</NavDropdown.Item>
 		</NavDropdown>
 	);
 
