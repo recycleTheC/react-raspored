@@ -11,6 +11,7 @@ import SubscribersState from './context/subscribers/SubscribersState';
 
 import Home from './pages/Home';
 import TeacherClassForm from './components/teachers_classes/TeacherClassForm';
+import CreateSchedule from './components/schedule/CreateSchedule';
 import Login from './components/auth/Login';
 import Alerts from './components/layout/Alerts';
 import Timeline from './components/timeline/Timeline';
@@ -26,59 +27,97 @@ import { Subscriber } from './pages/subscribers/Subscriber';
 import setAuthToken from './utils/setAuthToken';
 
 if (localStorage.token) {
-	setAuthToken(localStorage.token);
+	setAuthToken(localStorage.token); // dohvaćanje tokena iz lokalnog spremnika web preglednika
 }
 
 function App() {
 	return (
 		<BrowserRouter>
-			<AuthState>
-				<ScheduleState>
-					<AlertState>
-						<Layout>
-							<Alerts />
-							<Switch>
-								<Route exact path='/' component={Home} />
+			<AuthState /* state autentifikacije*/>
+				<ScheduleState /* state rasporeda */>
+					<AlertState /* state komponente za prikaz obavijesti */>
+						<Layout /* kostur web stranice (zaglavlje, glavni container, podnožje) */
+						>
+							<Alerts /* komponente obavijesti */ />
+							<Switch /* renderiranje komponente koja odgovara ruti*/>
+								<Route
+									exact
+									path='/'
+									component={Home}
+									/* prikaz rasporeda */
+								/>
 								<PrivateRoute
 									exact
 									path='/schedule/basic'
 									component={TeacherClassForm}
+									/* administriranje predavača i predmeta*/
 								/>
-								<Route exact path='/login' component={Login} />
-								<Route exact path='/notes' component={Timeline} />
-								<Route exact path='/notifications' component={Notifications} />
+								<PrivateRoute
+									exact
+									path='/schedule/create'
+									component={CreateSchedule}
+									/* administriranje rasporeda*/
+								/>
+								<Route
+									exact
+									path='/login'
+									component={Login} /* komponenta prijave korisnika */
+								/>
+								<Route
+									exact
+									path='/notes'
+									component={Timeline} /* komponenta vremenske crte predmeta */
+								/>
+								<Route
+									exact
+									path='/notifications'
+									component={Notifications} /* komponenta svih obavijesti*/
+								/>
 								<Route
 									exact
 									path='/notifications/:id'
-									component={Notification}
+									component={
+										Notification
+									} /* komponenta pojedinačne obavijesti*/
 								/>
 								<PrivateRoute
 									exact
 									path='/notifications/edit/:id'
-									component={EditNotification}
+									component={
+										EditNotification
+									} /* komponenta za uređivanje pojedinačne obavijesti*/
 								/>
-								<Route exact path='/calendar' component={Calendar} />
+								<Route
+									exact
+									path='/calendar'
+									component={
+										Calendar
+									} /* komponenta kalendara ispita i obaveza */
+								/>
 
 								<ContextRoute
 									exact
 									path='/subscribers/register'
 									component={RegisterSubscriber}
+									/* komponenta za registraciju pretplatnika */
 									context={SubscribersState}
 								/>
 								<ContextRoute
 									exact
 									path='/subscribers/'
 									component={RequestSubscriber}
+									/* komponenta za zhtjev novog pristupnog ključa pretplatnika */
 									context={SubscribersState}
 								/>
 								<ContextRoute
 									exact
 									path='/subscribers/me/:key'
 									component={Subscriber}
+									/* komponenta za administriranje pretplate */
 									context={SubscribersState}
 								/>
 
-								<Route component={NotFound} />
+								<Route component={NotFound} /* komponenta poruke 404 */ />
 								{/* MUST be at the END of the Switch*/}
 							</Switch>
 						</Layout>

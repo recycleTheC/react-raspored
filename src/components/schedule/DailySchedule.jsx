@@ -42,16 +42,21 @@ function DailySchedule({ date }) {
 		notes: false,
 		exams: false,
 		changes: false,
-	});
+	}); // state za korištenje modalnih prozora
 
 	const toggleModal = (e) => {
+		// pokreni modalni prozor
 		setModal({
 			[e.target.name]: !showModal[e.target.name],
 		});
 	};
 
 	const edit = (
-		<ListGroupItem key='toolbar' style={{ border: 0 }}>
+		<ListGroupItem
+			key='toolbar'
+			style={{ border: 0 }}
+			/* toolbar za uređivanje rasporeda */
+		>
 			<ButtonToolbar>
 				<ButtonGroup style={{ margin: 'auto' }}>
 					<Button
@@ -59,6 +64,7 @@ function DailySchedule({ date }) {
 						size='sm'
 						name='notes'
 						onClick={toggleModal}
+						/* pokretanje modalnog prozora za uređivanje bilješki */
 					>
 						Bilješke
 					</Button>
@@ -67,6 +73,7 @@ function DailySchedule({ date }) {
 						size='sm'
 						name='exams'
 						onClick={toggleModal}
+						/* pokretanje modalnog prozora za uređivanje ispita */
 					>
 						Ispiti
 					</Button>
@@ -75,6 +82,7 @@ function DailySchedule({ date }) {
 						size='sm'
 						onClick={toggleModal}
 						name='changes'
+						/* pokretanje modalnog prozora za uređivanje izmjena rasporeda */
 					>
 						Izmjene
 					</Button>
@@ -86,6 +94,7 @@ function DailySchedule({ date }) {
 	const examList = (
 		<ListGroup.Item key='exams' className='text-center' style={{ border: 0 }}>
 			<Badge pill variant='dark' style={{ whiteSpace: 'break-spaces' }}>
+				{/* znak za obavještavanje o ispitima na zadani dan */}
 				<span
 					style={{
 						fontSize: '1rem',
@@ -100,27 +109,35 @@ function DailySchedule({ date }) {
 						}}
 					/>{' '}
 					Pisane provjere:{' '}
-					{exams.length > 0 &&
-						exams
-							.map((exam, index) => {
-								return (
-									<OverlayTrigger
-										placement='bottom'
-										delay={{ show: 250, hide: 400 }}
-										key={exam._id}
-										overlay={
-											<Popover id={`popover-basic-${index}`}>
-												<Popover.Content>
-													<div>{exam.content}</div>
-												</Popover.Content>
-											</Popover>
-										}
-									>
-										<Badge variant='danger'>{exam.classKey.name}</Badge>
-									</OverlayTrigger>
-								);
-							})
-							.reduce((prev, curr) => [prev, ' ', curr])}
+					{
+						exams.length > 0 &&
+							exams
+								.map((exam, index) => {
+									// prođi kroz sve ispite
+									return (
+										<OverlayTrigger
+											placement='bottom'
+											delay={{ show: 250, hide: 400 }}
+											key={exam._id}
+											overlay={
+												<Popover id={`popover-basic-${index}`}>
+													<Popover.Content>
+														<div>{exam.content}</div>
+													</Popover.Content>
+												</Popover>
+											}
+											/* komponenta s balončićem koji prikazuje sadržaj ispita */
+										>
+											<Badge variant='danger'>{exam.classKey.name}</Badge>
+										</OverlayTrigger>
+									);
+								})
+								.reduce((prev, curr) => [
+									prev,
+									' ',
+									curr,
+								]) /* između komponenti se umeće razmak */
+					}
 				</span>
 			</Badge>
 		</ListGroup.Item>
@@ -133,8 +150,10 @@ function DailySchedule({ date }) {
 				delay={{ show: 250, hide: 400 }}
 				overlay={
 					<Popover id='popover-basic'>
-						<Popover.Content>
+						<Popover.Content /* komponenta s balončićem koji prikazuje izmjene u rasporedu */
+						>
 							{changes.map((item) => {
+								// prođi sve izmjene
 								return (
 									<div key={item._id}>
 										{item.classId}. sat -{' '}
@@ -155,6 +174,7 @@ function DailySchedule({ date }) {
 				}
 			>
 				<Badge pill variant='danger'>
+					{/* znak za obaviještavanje o izmjenama rasporeda na zadani dan */}
 					<span
 						style={{
 							fontSize: '1rem',
@@ -179,6 +199,7 @@ function DailySchedule({ date }) {
 			style={{ border: 0 }}
 		>
 			<Badge pill variant='primary' style={{ whiteSpace: 'break-spaces' }}>
+				{/* znak za prikaz sažetka obavijesti na zadani dan */}
 				<div
 					style={{
 						fontSize: '1rem',
@@ -192,11 +213,13 @@ function DailySchedule({ date }) {
 					{dailyNotifications.length > 0 &&
 						dailyNotifications
 							.map((item) => {
+								// prođi sve obavijesti
 								return (
 									<Link
 										to={`/notifications/${item._id}`}
 										key={item._id}
 										style={{ color: 'inherit', textDecoration: 'inherit' }}
+										/* naslov obavijesti kao poveznica na opisanu obavijest*/
 									>
 										<span>{item.title}</span>
 									</Link>
@@ -208,15 +231,16 @@ function DailySchedule({ date }) {
 		</ListGroup.Item>
 	);
 
-	const [currentTime, setTime] = useState(new Date());
+	const [currentTime, setTime] = useState(new Date()); // trenutno vrijeme
 	const isToday = new Date().toDateString() == date.toDateString();
-	const [currentTimeString, setCurrentStr] = useState('');
+	const [currentTimeString, setCurrentStr] = useState(''); // trenutno vrijeme u obliku stringa
 
 	useEffect(() => {
 		if (isToday) {
+			// ako je odabran današnji dan
 			const interval = setInterval(() => {
 				setTime(new Date());
-			}, 5000);
+			}, 5000); // svakih 5 sekudni postavi novo vrijeme u state
 
 			return () => {
 				clearInterval(interval);
@@ -235,9 +259,11 @@ function DailySchedule({ date }) {
 				: currentTime.getMinutes();
 
 		setCurrentStr(hour + ':' + minute);
-	}, [currentTime]);
+	}, [currentTime]); // postavlja novi string vremena kod promjene state-a
 
 	const getUntil = (startTime) => {
+		// izračun vremena do početka sata
+
 		const [startH, startMin] = startTime.split(':');
 		const start = new Date().setHours(startH, startMin);
 		const diff = differenceInMinutes(currentTime, start);
@@ -251,12 +277,20 @@ function DailySchedule({ date }) {
 	if (schedule.length > 0)
 		return (
 			<ListGroup variant='flush' className='mt-2 mb-3'>
-				{!loading && authContext.isAuthenticated && edit}
-				{dailyNotifications.length > 0 && notificationAlert}
-				{changes.length > 0 && changesAlert}
-				{exams.length > 0 && examList}
+				{
+					!loading &&
+						authContext.isAuthenticated &&
+						edit /* prijavljeni korisnik ima pristup uređivanju rasporeda */
+				}
+				{
+					dailyNotifications.length > 0 &&
+						notificationAlert /* prikaži obavijesti ako postoje */
+				}
+				{changes.length > 0 && changesAlert /* prikaži izmjene ako postoje */}
+				{exams.length > 0 && examList /* prikaži ispite ako postoje */}
 
 				{schedule.map((row) => {
+					// prođi kroz sve retke rasporeda
 					const {
 						location,
 						locationChanged,
@@ -264,12 +298,14 @@ function DailySchedule({ date }) {
 						timeStart,
 						timeEnd,
 						classes,
-					} = row;
+					} = row; // dohvaćanje vrijednosti retka
 
 					const isCurrent =
 						currentTimeString >= timeStart && currentTimeString < timeEnd;
+					// provjerava traje li trenutni redak
 
 					const timeUntil = isCurrent ? false : getUntil(timeStart);
+					// dohvaća broj minuta do početka trenutnog retka rasporeda
 
 					return (
 						<ListGroup.Item key={row.scheduleId}>
@@ -300,24 +336,38 @@ function DailySchedule({ date }) {
 											</Badge>
 										)}{' '}
 										{classes.map((x) => x.changed).includes(true) && (
-											<Badge pill variant='danger'>
+											<Badge
+												pill
+												variant='danger'
+												/* prikazuje se ako postoji izmjena za trenutni redak */
+											>
 												izmjena
 											</Badge>
 										)}{' '}
 										{isToday && isCurrent && (
-											<Badge variant='danger' className='pulser'>
+											<Badge
+												variant='danger'
+												className='pulser'
+												/* prikazuje da je ovaj sat u tijeku */
+											>
 												LIVE
 											</Badge>
 										)}{' '}
 										{isToday && timeUntil && (
-											<Badge pill variant='warning'>
+											<Badge
+												pill
+												variant='warning'
+												/* prikazuje vrijeme do početka sata */
+											>
 												za {timeUntil}
 											</Badge>
 										)}
 									</div>
 									<Row>
 										{classes.map((item, index) => {
-											const factor = 12 / row.classes.length;
+											// prođi svaki predmet u retku
+
+											const factor = 12 / row.classes.length; // faktori veličine stupaca
 											const border = index > 0 ? 'between' : '';
 											const size = item.notes.length === 0 ? 12 : 6;
 
@@ -335,6 +385,7 @@ function DailySchedule({ date }) {
 															className='mb-2'
 														>
 															<h4>
+																{/* ispis naziva predmeta */}
 																{item.name}{' '}
 																{item.changed && (
 																	<ExclamationTriangle
@@ -345,6 +396,7 @@ function DailySchedule({ date }) {
 																)}
 															</h4>
 															<small>
+																{/* ispis svih imena predavača odvojenih kosom crtom */}
 																{item.teacher &&
 																	item.teacher
 																		.map((t) => t.name)
@@ -365,6 +417,7 @@ function DailySchedule({ date }) {
 																		Pisana provjera
 																	</Badge>{' '}
 																	<small>
+																		{/* ispis sadržaja pisanih projvera za predmet odvojenih kosom crtom */}
 																		{item.exams
 																			.map((exam) => (
 																				<strong key={uuid()}>{exam}</strong>
@@ -387,9 +440,11 @@ function DailySchedule({ date }) {
 																<ul className='pl-4'>
 																	{item.notes.map((note) => (
 																		<li key={uuid()}>
+																			{console.log(note)}
 																			{!note.reminder ? (
 																				!note.highlight ? (
 																					<small>
+																						{/* ispis bilješke */}
 																						<ReactMarkdown
 																							source={note.text}
 																							renderers={{
@@ -408,6 +463,7 @@ function DailySchedule({ date }) {
 																					</small>
 																				) : (
 																					<>
+																						{/* ispis podsjetnika */}
 																						<Badge pill variant='light'>
 																							{note.title
 																								? note.title
@@ -459,6 +515,7 @@ function DailySchedule({ date }) {
 																					}
 																				>
 																					<Badge pill variant='secondary'>
+																						{/* ispis podsjetnika koji vrijedi za odabrani dan*/}
 																						{note.title
 																							? note.title
 																							: 'Zadatak'}{' '}
@@ -469,6 +526,7 @@ function DailySchedule({ date }) {
 																							{
 																								locale,
 																							}
+																							/* ispis datuma kada je zadan podsjetnik */
 																						)}
 																						)
 																					</Badge>
@@ -496,18 +554,21 @@ function DailySchedule({ date }) {
 							name='notes'
 							close={toggleModal}
 							date={date}
+							/* modlani prozor za uređivanje bilješki */
 						/>
 						<EditExam
 							show={showModal.exams}
 							name='exams'
 							close={toggleModal}
 							date={date}
+							/* modlani prozor za uređivanje ispita */
 						/>
 						<EditChanges
 							show={showModal.changes}
 							name='changes'
 							close={toggleModal}
 							date={date}
+							/* modlani prozor za uređivanje izmjena */
 						/>
 					</>
 				)}
@@ -515,11 +576,12 @@ function DailySchedule({ date }) {
 		);
 	else if (dailyNotifications.length > 0)
 		return (
+			// vraća obavijesti
 			<ListGroup variant='flush' className='mt-2 mb-3'>
 				{notificationAlert}
 			</ListGroup>
 		);
-	else return null;
+	else return null; // vraća null ako nema rasporeda ni obavijesti
 }
 
 DailySchedule.propTypes = {

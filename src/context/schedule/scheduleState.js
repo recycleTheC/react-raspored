@@ -38,6 +38,7 @@ import {
 	GET_AVAILABLE_DATES,
 	GET_REMINDERS,
 	CREATE_CLASS,
+	CREATE_SCHEDULE,
 } from '../types';
 
 const ScheduleState = (props) => {
@@ -921,6 +922,31 @@ const ScheduleState = (props) => {
 		}
 	};
 
+	const createSchedule = async (schedule) => {
+		setLoading();
+
+		const options = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+
+		try {
+			await axios.post('/api/schedule', schedule, options);
+
+			dispatch({
+				type: CREATE_SCHEDULE,
+				payload: { msg: 'Raspored spremljen' },
+			});
+		} catch (err) {
+			console.log(err);
+			dispatch({
+				type: CREATE_SCHEDULE,
+				payload: { msg: 'Pogreška tijekom spremanja' },
+			});
+		}
+	};
+
 	const compareNotifications = (a, b) => {
 		if (a.fromDate > b.fromDate) {
 			return -1;
@@ -994,6 +1020,7 @@ const ScheduleState = (props) => {
 				setGlobalDate,
 				getAvailableDates,
 				getReminders,
+				createSchedule,
 			}}
 		>
 			{props.children}

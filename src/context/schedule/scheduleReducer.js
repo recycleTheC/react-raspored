@@ -32,6 +32,7 @@ import {
 	GET_AVAILABLE_DATES,
 	GET_REMINDERS,
 	CREATE_CLASS,
+	CREATE_SCHEDULE,
 } from '../types';
 
 export default (state, action) => {
@@ -95,6 +96,13 @@ export default (state, action) => {
 				...state,
 				classes: action.payload.response || action.payload || [],
 				status: { msg: action.payload.msg, type: action.payload.type },
+				loading: false,
+			};
+
+		case CREATE_SCHEDULE:
+			return {
+				...state,
+				status: { schedule: action.payload.msg },
 				loading: false,
 			};
 

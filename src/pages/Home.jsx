@@ -15,11 +15,11 @@ import Holidays from '../components/decorations/Holidays';
 export default function Home() {
 	const context = useContext(ScheduleContext);
 	const { loading, schedule, setGlobalDate } = context;
-	const [date, setDate] = useState(context.date);
+	const [date, setDate] = useState(context.date); // lokalni datum
 
 	useEffect(() => {
-		setGlobalDate(date);
-	}, [date]);
+		setGlobalDate(date); // postavljanje lokalnog datuma u state
+	}, [date]); // izvrši naredbe kada se promjeni lokalni datum
 
 	const spinner = (
 		<div
@@ -40,21 +40,25 @@ export default function Home() {
 					<Button
 						variant='outline-primary'
 						onClick={() => {
-							setDate(addDays(date, -1));
+							setDate(addDays(date, -1)); // pomicanje datuma za 1 dan unatrag
 						}}
 					>
 						<ArrowLeftCircle />
 					</Button>
 				</Column>
 				<Column>
-					<DatePick date={date} setDate={setDate} />
+					<DatePick
+						date={date}
+						setDate={setDate}
+						/* komponenta za prikaz kalendara za odabir datuma */
+					/>
 				</Column>
 				<Column>
 					<Button
 						type='submit'
 						variant='outline-primary'
 						onClick={() => {
-							setDate(addDays(date, 1));
+							setDate(addDays(date, 1)); // pomicanje datuma za 1 dan unaprijed
 						}}
 					>
 						<ArrowRightCircle />
@@ -82,11 +86,15 @@ export default function Home() {
 				)}
 				{schedule.msg && (
 					<Column md='12' sm='12' style={{ textAlign: 'center' }}>
-						<small>{schedule.msg}</small>
+						<small>{schedule.msg}</small> {/* prikaz poruke sa poslužitelja */}
 					</Column>
 				)}
 			</>
-			{loading ? spinner : <DailySchedule date={date} />}
+			{loading ? (
+				spinner
+			) : (
+				<DailySchedule date={date} /* prikaz komponente rasporeda */ />
+			)}
 			{schedule.options && schedule.options == 'xmas' && (
 				<Holidays date={date} />
 			)}
