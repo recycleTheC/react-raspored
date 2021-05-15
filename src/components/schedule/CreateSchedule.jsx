@@ -35,7 +35,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id1),
 				class: item,
 				timeStart: values.timeStart1,
-				timeEnd: values.timeStart1,
+				timeEnd: values.timeEnd1,
 				location: values.location1,
 			};
 
@@ -48,7 +48,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id2),
 				class: item,
 				timeStart: values.timeStart2,
-				timeEnd: values.timeStart2,
+				timeEnd: values.timeEnd2,
 				location: values.location2,
 			};
 
@@ -61,7 +61,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id3),
 				class: item,
 				timeStart: values.timeStart3,
-				timeEnd: values.timeStart3,
+				timeEnd: values.timeEnd3,
 				location: values.location3,
 			};
 
@@ -74,7 +74,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id4),
 				class: item,
 				timeStart: values.timeStart4,
-				timeEnd: values.timeStart4,
+				timeEnd: values.timeEnd4,
 				location: values.location4,
 			};
 
@@ -87,7 +87,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id5),
 				class: item,
 				timeStart: values.timeStart5,
-				timeEnd: values.timeStart5,
+				timeEnd: values.timeEnd5,
 				location: values.location5,
 			};
 
@@ -100,7 +100,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id6),
 				class: item,
 				timeStart: values.timeStart6,
-				timeEnd: values.timeStart6,
+				timeEnd: values.timeEnd6,
 				location: values.location6,
 			};
 
@@ -113,7 +113,7 @@ const CreateSchedule = () => {
 				id: parseInt(values.id7),
 				class: item,
 				timeStart: values.timeStart7,
-				timeEnd: values.timeStart7,
+				timeEnd: values.timeEnd7,
 				location: values.location7,
 			};
 
